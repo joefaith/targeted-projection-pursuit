@@ -1,0 +1,10 @@
+TODO
+
+- fix the row sorter bug in the projection table list selection model
+- can't seem to move individual points (see ScatterPlotMouseListener.306)
+- add proper error logging using Log4J or similar
+- when showing series, lines should be colored to show direction
+- allow user to grab origin marker to move view of entire data set
+- make Rectangle a subclass (or decorator?) of Shape, to give more flexibility in the choice of selector
+- drag and drop attributes between retinal (color etc) and spatial (projection) panels, making it explicit that an attribute cannot be used for both
+- make projection table pop-out
