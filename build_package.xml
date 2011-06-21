@@ -111,7 +111,7 @@
     </jar>
   </target>
 
-  <target name="make_package" depends="exejar" description="Make the package zip file.">
+  <target name="make_weka_package" depends="exejar" description="Make the weka package zip file.">
     <mkdir dir="${dist}/${package}"/>
     <copy todir="${dist}/${package}">
       <fileset dir="${dist}">
@@ -167,14 +167,14 @@
     <zip destfile="${dist}/${package}-${version}.zip" 
       basedir="${dist}/${package}">
     </zip>
-  	<copy dest="${dist}/${package}.zip" src="${dist}/${package}-${version}.zip"/>
+  	<copy file="${dist}/${package}-${version}.zip" tofile="${dist}/${package}.zip"/>
   </target>
 
   <!-- Put all .java, and .props files into ${dist}/${package}-src.jar-->
   <target name="srcjar" depends="init_dist, init_all"
    description="Create a jar file containing weka source in ./dist.">  
     <!-- jar up the source -->
-    <jar jarfile="${dist}/${package}-src.jar" 
+    <jar jarfile="${dist}/${package}-src-${version}.jar" 
       basedir=".">
       <include name="*.xml"/>
       <include name="src/**/*.excludes"/>
