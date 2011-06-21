@@ -1,0 +1,17 @@
+#summary A list of papers that use TPP
+
+We would be grateful if you could add any papers that make use of this package
+
+J.Faith, S.Rajbhandari, "The Use of Linear Projections in the Visual Analysis of Signals in an Indoor Optical Wireless Link", IEEE-IET International Symposium on Communication Systems, Networks and Digital Signal Processing 2010 
+
+C.Haddow, J.Perry, M.Durrant, J.Faith, "Predicting Functional Residues of Protein Sequence Alignments as a Feature Selection Task", International Journal of Data Mining in Bioinformatics (2010, at print)
+
+J.Faith (2009) "Interactive Data Exploration with Targeted Projection Pursuit", Leonardo Electronic Almanac, MIT Press, 16.6-7
+
+M.Angelova, C.Myers, and J.Faith, “Classification of Genes Based on Gene Expression Analysis”, Physics of Atomic Nuclei, 2008, Vol. 71, No. 5, pp. 780--787.
+
+J.Faith, "Targeted Projection Pursuit for Interactive Exploration of High-Dimensional Data Sets",  Proceedings of 11th International Conference on Information Visualisation, Zurich, 2007
+
+J.Faith, R.Mintram, M.Angelova (2006), "Targeted Projection Pursuit for Visualising Gene Expression Data Classifications", BioInformatics, 22(21):2667, 2006.
+
+J.Faith and M. Brockway (2006), “Targeted Projection Pursuit Tool for Gene Expression Visualisation”, Journal of Integrative Bioinformatics, 3(2):43, 2006.
