@@ -1,0 +1,3 @@
+#summary Development of the TPP implementation
+
+All source code, libraries, and an ant build file required to build TPP are available to download, and access to the SVN repository is available on request. Please get in touch if you would like to be involved in further development of TPP.
