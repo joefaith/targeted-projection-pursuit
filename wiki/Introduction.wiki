@@ -1,18 +1,7 @@
 #summary An introduction to TPP for data exploration and visual analysis
 
-A slide show introducing the principles behind TPP and how the interface works is available here:
-http://targeted-projection-pursuit.googlecode.com/files/Targeted%20Projection%20Pursuit.pptx
+Targeted Projection Pursuit (TPP) is an interactive information visualisation technique that allows the user to explore high dimensional data in an intuitive and transparent way. This projects includes a plugin package for the Weka data mining toolket
 
-A list of references to papers that make use of TPP are available here:
-
-= Introduction =
-
-Add your content here.
+For more information start with this [http://targeted-projection-pursuit.googlecode.com/files/Targeted%20Projection%20Pursuit.pptx slideshow] introducing the principles behind TPP and how the interface works; or to this [http://code.google.com/p/targeted-projection-pursuit/wiki/Bibliography bibliography] of papers that make use of TPP.
 
 
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
