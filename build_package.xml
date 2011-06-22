@@ -10,7 +10,7 @@
 
   <!-- set global properties for this build -->
   <property name="package" value="TPP"/>
-  <property name="version" value="1.0.0"/>
+  <property name="version" value="1.0.3"/>
   <property name="src" value="src"/>
   <property name="lib" value="lib" />
   <property name="build" value="build"/>
@@ -126,6 +126,7 @@
     <copy file="Description.props"
           todir="${dist}/${package}"/>
 	<replace file="${dist}/${package}/Description.props" token="*VERSION*" value="${version}" />
+	<replace file="${dist}/${package}/Description.props" token="*TODAY*" value="${TODAY}" />
     <copy file="Explorer.props"
           todir="${dist}/${package}"/>
     <mkdir dir="${dist}/${package}/lib"/>

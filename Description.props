@@ -3,11 +3,11 @@
 # Package name (required)
 PackageName=TPP
 
-# Current version number is set by build-package.xml
+# Current version number is set by ant build
 Version=*VERSION*
 
-#Date (year-month-day)
-Date=2011-06-21
+# Date is is set by ant build
+Date=*TODAY*
 
 # Title (required)
 Title=Targeted Projection Pursuit

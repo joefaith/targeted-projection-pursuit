@@ -277,13 +277,13 @@ public class ScatterPlotModel extends TPPModel {
 	}
 
 	/** remove multiple attributes */
-	public void removeAttributes(Vector<Attribute> selectedAttributes) {
-		for (Attribute at : selectedAttributes)
+	public void removeAttributes(Vector<Attribute> attributes) {
+		for (Attribute at : attributes)
 			removeRetinalAttribute(at);
 		unselectAxes();
-		int[] atx = new int[selectedAttributes.size()];
+		int[] atx = new int[attributes.size()];
 		for (int a = 0; a < atx.length; a++)
-			atx[a] = indexOf(selectedAttributes.get(a));
+			atx[a] = indexOf(attributes.get(a));
 		Remove remove = new Remove();
 		remove.setAttributeIndicesArray(atx);
 		try {

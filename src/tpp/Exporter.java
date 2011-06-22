@@ -34,11 +34,12 @@ public class Exporter {
 
 	private static final String DATA_FILE_DELIMITER = "\t";
 
+	/** Save the current view as a PNG image file. If the file is null then the user is prompted to choose one. */
 	static void saveViewAsPNGImage(ScatterPlotViewPanel viewPanel, ScatterPlotModel model,
 			File file) {
 		if (file == null) {
 			JFileChooser chooser = new JFileChooser(DEFAULT_DIRECTORY);
-			int returnVal = chooser.showOpenDialog(null);
+			int returnVal = chooser.showSaveDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 				file = chooser.getSelectedFile();
 		}
@@ -56,12 +57,13 @@ public class Exporter {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/** Save the current view as a SVG image file. If the file is null then the user is prompted to choose one. */
 	static void saveViewAsSVGImage(ScatterPlotViewPanel viewPanel, ScatterPlotModel model,
 			File file) {
 		if (file == null) {
 			JFileChooser chooser = new JFileChooser(DEFAULT_DIRECTORY);
-			int returnVal = chooser.showOpenDialog(null);
+			int returnVal = chooser.showSaveDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 				file = chooser.getSelectedFile();
 		}
@@ -89,11 +91,12 @@ public class Exporter {
 		}
 	}
 
+	/** Save the current view as a EPS image file. If the file is null then the user is prompted to choose one. */
 	static void saveViewAsEPSImage(ScatterPlotViewPanel viewPanel, ScatterPlotModel model,
 			File file) {
 		if (file == null) {
 			JFileChooser chooser = new JFileChooser(DEFAULT_DIRECTORY);
-			int returnVal = chooser.showOpenDialog(null);
+			int returnVal = chooser.showSaveDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 				file = chooser.getSelectedFile();
 		}
@@ -120,10 +123,11 @@ public class Exporter {
 		}
 	}
 
+	/** Save the current projection matrix. If the file is null then the user is prompted to choose one. */
 	static void saveCurrentProjection(TPPModel model, File file) {
 		if (file == null) {
 			JFileChooser chooser = new JFileChooser(DEFAULT_DIRECTORY);
-			int returnVal = chooser.showOpenDialog(null);
+			int returnVal = chooser.showSaveDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 				file = chooser.getSelectedFile();
 		}
@@ -139,10 +143,11 @@ public class Exporter {
 		}
 	}
 
+	/** Save the current view matrix. If the file is null then the user is prompted to choose one. */
 	static void saveCurrentViewData(TPPModel model, File file) {
 		if (file == null) {
 			JFileChooser chooser = new JFileChooser(DEFAULT_DIRECTORY);
-			int returnVal = chooser.showOpenDialog(null);
+			int returnVal = chooser.showSaveDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 				file = chooser.getSelectedFile();
 		}
@@ -157,10 +162,11 @@ public class Exporter {
 		}
 	}
 
+	/** Save the current normalised data. If the file is null then the user is prompted to choose one. */
 	static void saveNormalisedData(TPPModel model, File file) {
 		if (file == null) {
 			JFileChooser chooser = new JFileChooser(DEFAULT_DIRECTORY);
-			int returnVal = chooser.showOpenDialog(null);
+			int returnVal = chooser.showSaveDialog(null);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 				file = chooser.getSelectedFile();
 		}
