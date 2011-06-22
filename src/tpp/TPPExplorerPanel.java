@@ -237,7 +237,7 @@ public class TPPExplorerPanel extends JPanel implements ExplorerPanel,
 				Exporter.saveCurrentProjection(model, null);
 				break;
 			case 2:
-				Exporter.saveCurrentViewData(model, null);
+				Exporter.saveCurrentViewDataAsTSV(model, null);
 				break;
 			case 3:
 				Exporter.saveViewAsEPSImage(viewPanel, model, null);

@@ -144,7 +144,7 @@ public class Exporter {
 	}
 
 	/** Save the current view matrix. If the file is null then the user is prompted to choose one. */
-	static void saveCurrentViewData(TPPModel model, File file) {
+	static void saveCurrentViewDataAsTSV(TPPModel model, File file) {
 		if (file == null) {
 			JFileChooser chooser = new JFileChooser(DEFAULT_DIRECTORY);
 			int returnVal = chooser.showSaveDialog(null);

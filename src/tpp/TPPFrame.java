@@ -486,7 +486,7 @@ public class TPPFrame extends JFrame implements ActionListener {
 		if (action.getSource() == getSaveProjectionMenuItem())
 			Exporter.saveCurrentProjection(model, null);
 		if (action.getSource() == getSaveViewDataMenuItem())
-			Exporter.saveCurrentViewData(model, null);
+			Exporter.saveCurrentViewDataAsTSV(model, null);
 		if (action.getSource() == getSaveSVGMenuItem())
 			Exporter.saveViewAsSVGImage(viewPanel, model, null);
 		if (action.getSource() == getSaveEPSMenuItem())

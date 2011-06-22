@@ -54,6 +54,11 @@ public class LinearProjection extends Matrix implements Projection {
 		super(inputDimensions, outputDimensions);
 	}
 
+	/** Construct a LinearProjection from a matrix */
+	public LinearProjection(Matrix m) {
+		super(m.getArray().clone());
+	}
+
 	public Matrix project(Matrix data) {
 		return data.times(this);
 	}

@@ -13,7 +13,7 @@ import weka.filters.unsupervised.attribute.Remove;
  * A TPPModel with added members for allowing it to be presented and manipulated
  * using via a Scatter Plot GUI
  */
-public class ScatterPlotModel extends TPPModel {
+public class ScatterPlotModel extends TPPModel implements Cloneable {
 
 	// == Initialisation ================
 
@@ -169,6 +169,8 @@ public class ScatterPlotModel extends TPPModel {
 
 	double sizeAttributeUpperBound;
 
+	private ScatterPlotModel snapshot;
+
 	public Attribute getShapeAttribute() {
 		return shapeAttribute;
 	}
@@ -253,7 +255,6 @@ public class ScatterPlotModel extends TPPModel {
 		return markerSize;
 	}
 
-
 	void initRetinalAttributes() {
 		shapeAttribute = null;
 		sizeAttribute = null;
@@ -278,6 +279,7 @@ public class ScatterPlotModel extends TPPModel {
 
 	/** remove multiple attributes */
 	public void removeAttributes(Vector<Attribute> attributes) {
+		takeSnapshot();
 		for (Attribute at : attributes)
 			removeRetinalAttribute(at);
 		unselectAxes();
@@ -289,12 +291,16 @@ public class ScatterPlotModel extends TPPModel {
 		try {
 			remove.setInputFormat(instances);
 			instances = Filter.useFilter(instances, remove);
-			// reinitialise the projection and data etc, preserving the projection
-			// NB we have to do this since the Remove filter messes up references to color attributes etc
+			// reinitialise the projection and data etc, preserving the
+			// projection
+			// NB we have to do this since the Remove filter messes up
+			// references to color attributes etc
 			double[][] oldProjectionValues = getProjection().copy().getArray();
 			initialise(instances);
-			// copy back the values of the projection (except those from the removed attributes)
-			((LinearProjection) getProjection()).setValues(MatrixUtils.removeRows(oldProjectionValues, atx));
+			// copy back the values of the projection (except those from the
+			// removed attributes)
+			((LinearProjection) getProjection()).setValues(MatrixUtils
+					.removeRows(oldProjectionValues, atx));
 			project();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -628,4 +634,43 @@ public class ScatterPlotModel extends TPPModel {
 		return transform;
 	}
 
+	public ScatterPlotModel clone() {
+		ScatterPlotModel clone = new ScatterPlotModel(numViewDimensions);
+		Instances cloneInstances = new Instances(instances);
+		try {
+			clone.setInstances(cloneInstances);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		clone.projection = new LinearProjection(projection);
+		clone.project();
+		return clone;
+	}
+
+	/** Take a snapshot of the current state of the model */
+	private void takeSnapshot() {
+		snapshot = this.clone();
+	}
+
+	/** Undo any changes back to the previous snapshot */
+	public void undo() {
+		if (snapshot != null) {
+			try {
+				initialise(snapshot.instances);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			projection = snapshot.projection;
+			project();
+			snapshot = null;
+			fireModelChanged(TPPModelEvent.DATA_STRUCTURE_CHANGED);
+		}
+	}
+
+	/** Whether there is a snapshot to undo to. */
+	public boolean canUndo() {
+		return snapshot != null;
+	}
 }

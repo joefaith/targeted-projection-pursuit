@@ -11,6 +11,7 @@ import java.util.Vector;
 import weka.classifiers.Classifier;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Attribute;
+import weka.core.Copyable;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -26,7 +27,7 @@ import weka.filters.unsupervised.attribute.ReplaceMissingValues;
  * abstract base class does everything except initialise the projection.
  * 
  */
-public class TPPModel implements Serializable {
+public class TPPModel implements Serializable, Cloneable {
 
 	/**
 	 * The minimum value allowed when computing PCAs. NB could probably be set
@@ -79,7 +80,7 @@ public class TPPModel implements Serializable {
 	protected boolean[] selectedPoints;
 
 	/** The number of view dimensions */
-	private int numViewDimensions = -1;
+	protected int numViewDimensions = -1;
 
 	/**
 	 * The centroids of the classes, keyed by the attribute that defines the
@@ -1042,5 +1043,19 @@ public class TPPModel implements Serializable {
 		Iterator<TPPModelEventListener> it = getListeners().iterator();
 		while (it.hasNext())
 			it.next().modelChanged(e);
+	}
+	
+	public TPPModel clone(){
+		TPPModel clone = new TPPModel(numViewDimensions);
+		Instances cloneInstances = new Instances(instances);
+		try {
+			clone.setInstances(cloneInstances);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		clone.projection = new LinearProjection(projection);
+		clone.project();
+		return clone;
 	}
 }

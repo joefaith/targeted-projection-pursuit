@@ -100,6 +100,8 @@ public class ScatterPlotControlPanel extends JPanel implements
 
 	private Dimension min = new Dimension(100, 20);
 
+	private JButton undoButton;
+
 	public ScatterPlotControlPanel() {
 		super();
 	}
@@ -175,6 +177,14 @@ public class ScatterPlotControlPanel extends JPanel implements
 		grid.gridy++;
 		add(actionsPanel, grid);
 
+		// add the projection table and attribute selection actions
+		addProjectionTableAndAttributeSelection(grid);
+
+		revalidate();
+
+	}
+
+	private void addProjectionTableAndAttributeSelection(GridBagConstraints grid) {
 		// add projection table
 		projectionTable = new ProjectionTable(spModel);
 		projectionTable
@@ -191,10 +201,16 @@ public class ScatterPlotControlPanel extends JPanel implements
 		removeAttributeButton.setToolTipText("Remove the selected attributes");
 		grid.gridy++;
 		grid.weighty = 0;
+		grid.gridwidth = 2;
 		add(removeAttributeButton, grid);
-
-		revalidate();
-
+		
+		undoButton = new JButton("Undo");
+		undoButton.addActionListener(this);
+		undoButton.setToolTipText("Restore the removed attributes");
+		undoButton.setEnabled(spModel.canUndo());
+		grid.gridx=2;
+		grid.gridwidth=1;
+		add(undoButton, grid);
 	}
 
 	private void addClassificationButton(JPanel actionsPanel,
@@ -530,6 +546,9 @@ public class ScatterPlotControlPanel extends JPanel implements
 				&& projectionTable.getSelectedAttributeIndices().length > 0)
 			spModel.removeAttributes(projectionTable.getSelectedAttributes());
 
+		if (event.getSource() == undoButton)
+			spModel.undo();
+		
 		if (event.getSource() == pointSelectorButton) {
 			spModel.selectPoint(pointSelectorCombo.getSelectedIndex());
 			spModel.drawRectangleAroundSelectedPoints();
