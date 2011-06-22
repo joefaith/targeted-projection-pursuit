@@ -1,5 +1,7 @@
 TODO
 
+- Save projection / view to arff file
+
 - fix the row sorter bug in the projection table list selection model
 - can't seem to move individual points (see ScatterPlotMouseListener.306)
 - add proper error logging using Log4J or similar
