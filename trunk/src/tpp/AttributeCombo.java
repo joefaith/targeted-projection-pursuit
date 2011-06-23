@@ -37,7 +37,8 @@ public class AttributeCombo extends JComboBox {
 	 *            attribute at all
 	 * @return
 	 */
-	public static AttributeCombo buildCombo(TPPModel tpp, int type, boolean addNull) {
+	public static AttributeCombo buildCombo(TPPModel tpp, int type,
+			boolean addNull) {
 
 		// find attributes
 		Vector<Attribute> ats = new Vector<Attribute>();
@@ -57,7 +58,10 @@ public class AttributeCombo extends JComboBox {
 	}
 
 	public Attribute getSelectedAttribute() {
-		return attributes.get(getSelectedIndex());
+		if (getSelectedIndex() == -1)
+			return null;
+		else
+			return attributes.get(getSelectedIndex());
 	}
 
 	public void setSelectedAttribute(Attribute at) {

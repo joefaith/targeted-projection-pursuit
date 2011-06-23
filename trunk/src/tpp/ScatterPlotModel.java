@@ -2,6 +2,7 @@ package tpp;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.Stack;
 import java.util.Vector;
 
 import weka.core.Attribute;
@@ -169,7 +170,7 @@ public class ScatterPlotModel extends TPPModel implements Cloneable {
 
 	double sizeAttributeUpperBound;
 
-	private ScatterPlotModel snapshot;
+	private Stack<ScatterPlotModel> snapshots;
 
 	public Attribute getShapeAttribute() {
 		return shapeAttribute;
@@ -650,27 +651,29 @@ public class ScatterPlotModel extends TPPModel implements Cloneable {
 
 	/** Take a snapshot of the current state of the model */
 	private void takeSnapshot() {
-		snapshot = this.clone();
+		if (snapshots == null)
+			snapshots = new Stack<ScatterPlotModel>();
+		snapshots.push(this.clone());
 	}
 
 	/** Undo any changes back to the previous snapshot */
 	public void undo() {
-		if (snapshot != null) {
+		if (snapshots != null && snapshots.size() > 0) {
+			ScatterPlotModel previous = snapshots.pop();
 			try {
-				initialise(snapshot.instances);
+				initialise(previous.instances);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			projection = snapshot.projection;
+			projection = previous.projection;
 			project();
-			snapshot = null;
 			fireModelChanged(TPPModelEvent.DATA_STRUCTURE_CHANGED);
 		}
 	}
 
 	/** Whether there is a snapshot to undo to. */
 	public boolean canUndo() {
-		return snapshot != null;
+		return (snapshots != null && snapshots.size()>0);
 	}
 }
