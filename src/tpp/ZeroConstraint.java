@@ -8,7 +8,6 @@ public class ZeroConstraint implements ProjectionConstraint {
 	/** Specify which attributes to clamp at zero */
 	public ZeroConstraint(int[] attributes) {
 		this.attributes = attributes;
-
 	}
 
 	public Projection findNearestValid(Projection p) {
@@ -29,7 +28,6 @@ public class ZeroConstraint implements ProjectionConstraint {
 	}
 
 	private boolean notZero(double d) {
-		return (d < 0 ? -d > MIN : d > MIN);
+		return (d > MIN || d < -MIN);
 	}
-
 }

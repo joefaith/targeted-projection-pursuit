@@ -203,50 +203,54 @@ public class ScatterPlotControlPanel extends JPanel implements
 		grid.weighty = 0;
 		grid.gridwidth = 2;
 		add(removeAttributeButton, grid);
-		
+
 		undoButton = new JButton("Undo");
 		undoButton.addActionListener(this);
 		undoButton.setToolTipText("Restore the removed attributes");
 		undoButton.setEnabled(spModel.canUndo());
-		grid.gridx=2;
-		grid.gridwidth=1;
+		grid.gridx = 2;
+		grid.gridwidth = 1;
 		add(undoButton, grid);
 	}
 
 	private void addClassificationButton(JPanel actionsPanel,
 			GridBagConstraints actionsGrid) {
-		// Add classification crossvalidation
+		// Add classification crossvalidation, but only if there are any nominal
+		// attributes
+		if (spModel.getNominalAttributes() != null
+				&& spModel.getNominalAttributes().size() > 0) {
 
-		/** Lets the user configure the classifier. */
-		classifierChooser = new GenericObjectEditor();
+			/** Lets the user configure the classifier. */
+			classifierChooser = new GenericObjectEditor();
 
-		/** The panel showing the current classifier selection. */
-		classifierChooserPanel = new PropertyPanel(classifierChooser);
-		classifierChooser.setClassType(Classifier.class);
-		classifierChooser.setValue(ExplorerDefaults.getClassifier());
+			/** The panel showing the current classifier selection. */
+			classifierChooserPanel = new PropertyPanel(classifierChooser);
+			classifierChooser.setClassType(Classifier.class);
+			classifierChooser.setValue(ExplorerDefaults.getClassifier());
 
-		classificationTargetCombo = AttributeCombo.buildCombo(spModel,
-				AttributeCombo.NOMINAL_ATTRIBUTES, false);
-		classificationTargetCombo
-				.setToolTipText("Choose the target attribute for the classifier");
-		applyClassifierButton = new JButton("Apply classifier:");
-		applyClassifierButton.addActionListener(this);
-		applyClassifierButton
-				.setToolTipText("<html><p width=\"300px\">Test the performance of a classification algorithm on this data. The chosen classifier is applied using 10-fold cross-validation, and the resulting predicted classifications and error are shown.</p></html>");
-		// classificationCombo = new JComboBox(new String[] { "lazy.IBk",
-		// "bayes.NaiveBayes", "functions.SMO",
-		// "functions.MultilayerPerceptron" });
-		// classificationCombo
-		classifierChooserPanel
-				.setToolTipText("Choose a classifier from the Weka toolkit");
-		actionsGrid.gridy++;
-		actionsGrid.gridx = 0;
-		actionsGrid.gridwidth = 1;
-		actionsPanel.add(applyClassifierButton, actionsGrid);
-		actionsGrid.gridx = 1;
-		actionsPanel.add(classifierChooserPanel, actionsGrid);
-		actionsGrid.gridx = 2;
-		actionsPanel.add(classificationTargetCombo, actionsGrid);
+			classificationTargetCombo = AttributeCombo.buildCombo(spModel,
+					AttributeCombo.NOMINAL_ATTRIBUTES, false);
+			classificationTargetCombo
+					.setToolTipText("Choose the target attribute for the classifier");
+			applyClassifierButton = new JButton("Apply classifier:");
+			applyClassifierButton.addActionListener(this);
+			applyClassifierButton
+					.setToolTipText("<html><p width=\"300px\">Test the performance of a classification algorithm on this data. The chosen classifier is applied using 10-fold cross-validation, and the resulting predicted classifications and error are shown.</p></html>");
+			// classificationCombo = new JComboBox(new String[] { "lazy.IBk",
+			// "bayes.NaiveBayes", "functions.SMO",
+			// "functions.MultilayerPerceptron" });
+			// classificationCombo
+			classifierChooserPanel
+					.setToolTipText("Choose a classifier from the Weka toolkit");
+			actionsGrid.gridy++;
+			actionsGrid.gridx = 0;
+			actionsGrid.gridwidth = 1;
+			actionsPanel.add(applyClassifierButton, actionsGrid);
+			actionsGrid.gridx = 1;
+			actionsPanel.add(classifierChooserPanel, actionsGrid);
+			actionsGrid.gridx = 2;
+			actionsPanel.add(classificationTargetCombo, actionsGrid);
+		}
 	}
 
 	private void addTestSetCreationButton(JPanel actionsPanel,
@@ -457,7 +461,7 @@ public class ScatterPlotControlPanel extends JPanel implements
 		// add selection attribute selector, with the current selection
 		// attribute shown
 		selectCombo = AttributeCombo.buildCombo(spModel,
-				AttributeCombo.ALL_ATTRIBUTES, false);
+				AttributeCombo.ALL_ATTRIBUTES, true);
 		selectCombo.setMinimumSize(min);
 		selectCombo.setSelectedAttribute(spModel.getSelectAttribute());
 		selectCombo.addActionListener(this);
@@ -479,8 +483,8 @@ public class ScatterPlotControlPanel extends JPanel implements
 		// can only separate points by a nominal attribute
 		// (SeparatePoints contains code to separate by numerical attributes as
 		// well but it doesn't work very well)
-		separateButton.setEnabled(selectCombo.getSelectedAttribute()
-				.isNominal());
+		separateButton.setEnabled(selectCombo.getSelectedAttribute() != null
+				&& selectCombo.getSelectedAttribute().isNominal());
 		viewOptionsGrid.gridx = 2;
 		viewOptionsGrid.gridwidth = 1;
 		viewOptionsPanel.add(separateButton, viewOptionsGrid);
@@ -529,7 +533,8 @@ public class ScatterPlotControlPanel extends JPanel implements
 			spModel.setSelectAttribute(selectCombo.getSelectedAttribute());
 			spModel.setColourAttribute(selectCombo.getSelectedAttribute());
 			selectionPanel.initialiseSelectionButtons();
-			separateButton.setEnabled(spModel.getSelectAttribute().isNominal());
+			separateButton.setEnabled(spModel.getSelectAttribute() != null
+					&& spModel.getSelectAttribute().isNominal());
 			revalidate();
 			repaint();
 		}
@@ -548,7 +553,7 @@ public class ScatterPlotControlPanel extends JPanel implements
 
 		if (event.getSource() == undoButton)
 			spModel.undo();
-		
+
 		if (event.getSource() == pointSelectorButton) {
 			spModel.selectPoint(pointSelectorCombo.getSelectedIndex());
 			spModel.drawRectangleAroundSelectedPoints();
@@ -607,6 +612,5 @@ public class ScatterPlotControlPanel extends JPanel implements
 	public ProjectionTable getProjectionTable() {
 		return projectionTable;
 	}
-
 
 }
