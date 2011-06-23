@@ -4,4 +4,4 @@ Targeted Projection Pursuit (TPP) is an interactive information visualisation te
 
 For more information start with this [http://targeted-projection-pursuit.googlecode.com/files/Targeted%20Projection%20Pursuit.pptx slideshow] introducing the principles behind TPP and how the interface works; or to this [http://code.google.com/p/targeted-projection-pursuit/wiki/Bibliography bibliography] of papers that make use of TPP.
 
-There's also a very short [http://vimeo.com/17527997 video demonstration] of using targeted projection pursuit for visual analysis, including a demonstration of how it can be used to evaluate clusterings.
+There's also a very short [http://vimeo.com/17527997 video demonstration] of using targeted projection pursuit for visual analysis, including a demonstration of how it can be used to evaluate clusterings. (NB the process is described as Adaptive Projection Analysis, but it means the same thing.)
