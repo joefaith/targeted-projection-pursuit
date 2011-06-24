@@ -111,8 +111,7 @@ public class TPPModel implements Serializable, Cloneable {
 	protected void initialiseProjection() throws Exception {
 		if (numViewDimensions <= 0)
 			throw new Exception("number of output dimensions not set");
-		projection = new LinearProjection(data.getColumnDimension(),
-				numViewDimensions);
+		projection = new LinearProjection(data.getColumnDimension(), numViewDimensions);
 	}
 
 	/** Construct a new TPP model with the given output dimension */
@@ -170,8 +169,7 @@ public class TPPModel implements Serializable, Cloneable {
 		if (getNumDataDimensions() * getNumDataPoints() < 1E6)
 			PCA();
 		else {
-			System.out
-					.println("Data too large to calculate PCA. Defaulting to a random projection.");
+			System.out.println("Data too large to calculate PCA. Defaulting to a random projection.");
 			randomProjection();
 		}
 
@@ -215,8 +213,7 @@ public class TPPModel implements Serializable, Cloneable {
 		// First find the numeric data attributes
 		numericAttributes = new Vector<Attribute>();
 		for (int i = 0; i < instances.numAttributes(); i++)
-			if (instances.attribute(i).isNumeric()
-					&& !instances.attribute(i).isDate())
+			if (instances.attribute(i).isNumeric() && !instances.attribute(i).isDate())
 				numericAttributes.add(instances.attribute(i));
 		if (numericAttributes.size() < 2)
 			throw new TPPException("Insufficient numeric attributes");
@@ -225,8 +222,7 @@ public class TPPModel implements Serializable, Cloneable {
 		// and copy all the numeric data into the matrix
 		for (int c = 0; c < numericAttributes.size(); c++)
 			for (int r = 0; r < instances.numInstances(); r++)
-				data.set(r, c,
-						instances.instance(r).value(numericAttributes.get(c)));
+				data.set(r, c, instances.instance(r).value(numericAttributes.get(c)));
 	}
 
 	/*
@@ -265,8 +261,7 @@ public class TPPModel implements Serializable, Cloneable {
 				// for each instance, set the value of the attribute
 				double d;
 				for (int i = 0; i < instances.numInstances(); i++) {
-					d = instances.instance(i).stringValue(nominal)
-							.equals(value) ? 1.0d : 0.0d;
+					d = instances.instance(i).stringValue(nominal).equals(value) ? 1.0d : 0.0d;
 					instances.instance(i).setValue(binary, d);
 				}
 			}
@@ -285,8 +280,7 @@ public class TPPModel implements Serializable, Cloneable {
 		for (int i : is)
 			description += ", point #"
 					+ (i + 1)
-					+ (descriptionAttribute == null ? "" : " ("
-							+ instances.instance(i).value(descriptionAttribute)
+					+ (descriptionAttribute == null ? "" : " (" + instances.instance(i).value(descriptionAttribute)
 							+ ")");
 		return description.substring(2);
 	}
@@ -350,8 +344,7 @@ public class TPPModel implements Serializable, Cloneable {
 			// for each instance, set the value of the attribute
 			Random r = new Random(System.currentTimeMillis());
 			for (int i = 0; i < instances.numInstances(); i++)
-				instances.instance(i).setValue(test,
-						r.nextDouble() > 1d / k ? TRAIN : TEST);
+				instances.instance(i).setValue(test, r.nextDouble() > 1d / k ? TRAIN : TEST);
 
 		} else {
 			// there are series, so the test set are the final points in the
@@ -364,8 +357,7 @@ public class TPPModel implements Serializable, Cloneable {
 			// then, for each series
 			TreeSet<Instance> nextSeries;
 			Iterator<Instance> itNextSeries;
-			Iterator<TreeSet<Instance>> allSeries = series.getAllSeries()
-					.values().iterator();
+			Iterator<TreeSet<Instance>> allSeries = series.getAllSeries().values().iterator();
 			int numPointsInSeries, numPointsInTrainingSet;
 			while (allSeries.hasNext()) {
 
@@ -373,9 +365,7 @@ public class TPPModel implements Serializable, Cloneable {
 				// training set
 				nextSeries = allSeries.next();
 				numPointsInSeries = nextSeries.size();
-				numPointsInTrainingSet = (int) Math
-						.round((double) numPointsInSeries * (double) (k - 1)
-								/ (double) k);
+				numPointsInTrainingSet = (int) Math.round((double) numPointsInSeries * (double) (k - 1) / (double) k);
 
 				// and set the training set
 				itNextSeries = nextSeries.iterator();
@@ -419,8 +409,7 @@ public class TPPModel implements Serializable, Cloneable {
 	 */
 	public boolean isPointInTestingSet(int p) {
 		if (instances.classIndex() >= 0
-				&& instances.instance(p)
-						.stringValue(instances.classAttribute()) == CLASS_UNKNOWN)
+				&& instances.instance(p).stringValue(instances.classAttribute()) == CLASS_UNKNOWN)
 			return true;
 		if (test == null)
 			return false;
@@ -528,9 +517,7 @@ public class TPPModel implements Serializable, Cloneable {
 		Attribute classAttribute = instances.classAttribute();
 		for (int r = 0; r < view.getRowDimension(); r++) {
 			if (getStringAttributes().size() > 0)
-				s += instances.instance(r).stringValue(
-						getStringAttributes().get(0))
-						+ "\t";
+				s += instances.instance(r).stringValue(getStringAttributes().get(0)) + "\t";
 			if (classAttribute != null)
 				s += instances.instance(r).stringValue(classAttribute) + "\t";
 			for (int c = 0; c < view.getColumnDimension(); c++)
@@ -609,11 +596,9 @@ public class TPPModel implements Serializable, Cloneable {
 	 * @throws TPPException
 	 */
 	public void pursueTarget() throws TPPException {
-		double error = projection.pursueTarget(data, target,
-				getPointsInTrainingSet());
+		double error = projection.pursueTarget(data, target, getPointsInTrainingSet());
 		if (getProjectionConstraint() != null)
-			projection = (LinearProjection) getProjectionConstraint()
-					.findNearestValid(projection);
+			projection = (LinearProjection) getProjectionConstraint().findNearestValid(projection);
 		view = projection.project(data);
 		fireModelChanged(TPPModelEvent.PROJECTION_CHANGED);
 	}
@@ -625,8 +610,7 @@ public class TPPModel implements Serializable, Cloneable {
 	 * @throws TPPException
 	 */
 	public void pursueTargetSingleShot() throws TPPException {
-		double error = projection.pursueTargetSingleShot(data, target,
-				getPointsInTrainingSet());
+		double error = projection.pursueTargetSingleShot(data, target, getPointsInTrainingSet());
 		view = projection.project(data);
 		fireModelChanged(TPPModelEvent.PROJECTION_CHANGED);
 	}
@@ -671,8 +655,7 @@ public class TPPModel implements Serializable, Cloneable {
 			}
 			removeClassification.setAttributeIndices(indices);
 			removeClassification.setInputFormat(instances);
-			numericInstances = Filter
-					.useFilter(instances, removeClassification);
+			numericInstances = Filter.useFilter(instances, removeClassification);
 
 			// build a clusterer
 			SimpleKMeans clusterer = new SimpleKMeans();
@@ -684,17 +667,21 @@ public class TPPModel implements Serializable, Cloneable {
 			// It would be nice to use the AddCluster filter to do this, but we
 			// are going to use the clustering of one set of instances to
 			// classify another
+
+			// first check there is no attribute with this name
+			String atName = "Cluster " + numClusters;
+			while (instances.attribute(atName) != null)
+				atName += "'";
+
 			FastVector values = new FastVector(numClusters);
 			for (int v = 0; v < numClusters; v++)
 				values.addElement("cluster " + (v + 1) + "/" + numClusters);
-			Attribute clustering = addAttribute(new Attribute("Cluster "
-					+ numClusters, values), null);
+			Attribute clustering = addAttribute(new Attribute(atName, values), null);
 
 			int c;
 			for (int i = 0; i < instances.numInstances(); i++) {
 				c = clusterer.clusterInstance(numericInstances.instance(i));
-				instances.instance(i).setValue(clustering,
-						(String) values.elementAt(c));
+				instances.instance(i).setValue(clustering, (String) values.elementAt(c));
 			}
 
 			// make this clustering the current classification
@@ -712,11 +699,9 @@ public class TPPModel implements Serializable, Cloneable {
 
 	public String toString(int point) {
 		if (getStringAttributes().size() > 0)
-			return instances.instance(point).stringValue(
-					getStringAttributes().get(0));
+			return instances.instance(point).stringValue(getStringAttributes().get(0));
 		else
-			return "Instance number " + (point + 1) + " of "
-					+ getNumDataPoints();
+			return "Instance number " + (point + 1) + " of " + getNumDataPoints();
 	}
 
 	/**
@@ -828,19 +813,15 @@ public class TPPModel implements Serializable, Cloneable {
 			instances = predictedData;
 
 			// change the names of the classification and error attributes
-			Attribute errorAttribute = instances.attribute(instances
-					.numAttributes() - 1);
-			Attribute classificationAttribute = instances.attribute(instances
-					.numAttributes() - 2);
-			errorAttribute = renameAttribute(errorAttribute, cls.getClass()
-					.getSimpleName() + " error");
-			classificationAttribute = renameAttribute(classificationAttribute,
-					cls.getClass().getSimpleName() + " classification");
+			Attribute errorAttribute = instances.attribute(instances.numAttributes() - 1);
+			Attribute classificationAttribute = instances.attribute(instances.numAttributes() - 2);
+			errorAttribute = renameAttribute(errorAttribute, cls.getClass().getSimpleName() + " error");
+			classificationAttribute = renameAttribute(classificationAttribute, cls.getClass().getSimpleName()
+					+ " classification");
 			// instances.setClass(classificationAttribute);
 
 			fireModelChanged(TPPModelEvent.DATA_STRUCTURE_CHANGED);
-			return new Attribute[] {
-					instances.attribute(instances.numAttributes() - 1),
+			return new Attribute[] { instances.attribute(instances.numAttributes() - 1),
 					instances.attribute(instances.numAttributes() - 2) };
 
 		} catch (Exception e) {
@@ -861,6 +842,7 @@ public class TPPModel implements Serializable, Cloneable {
 	 * @return
 	 */
 	private Attribute addAttribute(Attribute at, double[] values) {
+
 		// add it to the instances -- this creates a shallow
 		// copy of the attribute so we have to retrieve the copy
 		instances.insertAttributeAt(at, instances.numAttributes());
@@ -940,8 +922,7 @@ public class TPPModel implements Serializable, Cloneable {
 	public Matrix getCentroids(Attribute classification) throws Exception {
 
 		if (!classification.isNominal())
-			throw new Exception(
-					"Can only find centroids over nominal attributes");
+			throw new Exception("Can only find centroids over nominal attributes");
 
 		if (allCentroids.get(classification) == null) {
 			// first total up the positions for each class
@@ -989,9 +970,7 @@ public class TPPModel implements Serializable, Cloneable {
 				descriptions[p] = "";
 				for (int s = 0; s < sats.size(); s++) {
 					try {
-						descriptions[p] += instances.instance(p).stringValue(
-								sats.get(s))
-								+ " ";
+						descriptions[p] += instances.instance(p).stringValue(sats.get(s)) + " ";
 					} catch (Exception e) {
 						descriptions[p] += "? ";
 					}
@@ -1044,8 +1023,8 @@ public class TPPModel implements Serializable, Cloneable {
 		while (it.hasNext())
 			it.next().modelChanged(e);
 	}
-	
-	public TPPModel clone(){
+
+	public TPPModel clone() {
 		TPPModel clone = new TPPModel(numViewDimensions);
 		Instances cloneInstances = new Instances(instances);
 		try {
