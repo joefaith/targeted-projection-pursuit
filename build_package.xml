@@ -112,6 +112,7 @@
   </target>
 
   <target name="make_weka_package" depends="exejar" description="Make the weka package zip file.">
+    <delete dir="${dist}/${package}"/>
     <mkdir dir="${dist}/${package}"/>
     <copy todir="${dist}/${package}">
       <fileset dir="${dist}">
@@ -168,7 +169,6 @@
     <zip destfile="${dist}/${package}-${version}.zip" 
       basedir="${dist}/${package}">
     </zip>
-  	<copy file="${dist}/${package}-${version}.zip" tofile="${dist}/${package}.zip"/>
   </target>
 
   <!-- Put all .java, and .props files into ${dist}/${package}-src.jar-->
