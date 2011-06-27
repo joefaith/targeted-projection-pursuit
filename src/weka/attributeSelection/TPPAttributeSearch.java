@@ -38,15 +38,14 @@ import weka.filters.supervised.attribute.AttributeSelection;
  * algorithm. TPP is used to produce an N-dimensional (usually N=2) projection
  * of the data that separates classes in the data. The components in the
  * resulting projection are then used to rank each attribute. In order to reduce
- * execution time (if the number of attributes is >1000 say) we can optionally
+ * execution time (if the number of attributes is large, say >1000) we can optionally
  * use IG to preselect a subset of attributes. The user can also see the
  * resulting views of the data as they are produced. Should be used with a
  * TPPAttributeEvaluation evaluator (which is a dummy evaluator that does
  * nothing). The user can also specify the maximum number of cycles in training
  * and/or a convergence limit
  * <p>
- * See A.EnshaiFaith, J.
- * (2010)"Targeted Projection Pursuit as a Feature Selection Technique"
+ * See C.Haddow, J.Perry, M.Durrant and J.Faith, "Predicting Functional Residues of Protein Sequence Alignments as a Feature Selection Task", International Journal of Data Mining in Bioinformatics, 2011
  */
 public class TPPAttributeSearch extends ASSearch implements WindowListener,
 		RankedOutputSearch, OptionHandler, TechnicalInformationHandler,
@@ -130,10 +129,11 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 	public TechnicalInformation getTechnicalInformation() {
 		TechnicalInformation result;
 		result = new TechnicalInformation(Type.ARTICLE);
-		result.setValue(Field.AUTHOR, "Faith,J");
-		result.setValue(Field.YEAR, "2010");
+		result.setValue(Field.AUTHOR, "C.Haddow, J.Perry, M.Durrant, J.Faith");
+		result.setValue(Field.YEAR, "2011");
+		result.setValue(Field.JOURNAL, "International Journal of Data Mining in Bioinformatics");
 		result.setValue(Field.TITLE,
-				"Targeted Projection Pursuit as a Feature Selection Technique");
+				"Predicting Functional Residues of Protein Sequence Alignments as a Feature Selection Task");
 		return result;
 	}
 
