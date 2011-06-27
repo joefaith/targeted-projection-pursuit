@@ -111,8 +111,7 @@
     </jar>
   </target>
 
-  <target name="make_weka_package" depends="exejar" description="Make the weka package zip file.">
-    <delete dir="${dist}/${package}"/>
+  <target name="make_weka_package" depends="clean,exejar" description="Make the weka package zip file.">
     <mkdir dir="${dist}/${package}"/>
     <copy todir="${dist}/${package}">
       <fileset dir="${dist}">
