@@ -38,14 +38,16 @@ import weka.filters.supervised.attribute.AttributeSelection;
  * algorithm. TPP is used to produce an N-dimensional (usually N=2) projection
  * of the data that separates classes in the data. The components in the
  * resulting projection are then used to rank each attribute. In order to reduce
- * execution time (if the number of attributes is large, say >1000) we can optionally
- * use IG to preselect a subset of attributes. The user can also see the
- * resulting views of the data as they are produced. Should be used with a
+ * execution time (if the number of attributes is large, say >1000) we can
+ * optionally use IG to preselect a subset of attributes. The user can also see
+ * the resulting views of the data as they are produced. Should be used with a
  * TPPAttributeEvaluation evaluator (which is a dummy evaluator that does
  * nothing). The user can also specify the maximum number of cycles in training
  * and/or a convergence limit
  * <p>
- * See C.Haddow, J.Perry, M.Durrant and J.Faith, "Predicting Functional Residues of Protein Sequence Alignments as a Feature Selection Task", International Journal of Data Mining in Bioinformatics, 2011
+ * See C.Haddow, J.Perry, M.Durrant and J.Faith,
+ * "Predicting Functional Residues of Protein Sequence Alignments as a Feature Selection Task"
+ * , International Journal of Data Mining in Bioinformatics, 2011
  */
 public class TPPAttributeSearch extends ASSearch implements WindowListener,
 		RankedOutputSearch, OptionHandler, TechnicalInformationHandler,
@@ -131,8 +133,10 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 		result = new TechnicalInformation(Type.ARTICLE);
 		result.setValue(Field.AUTHOR, "C.Haddow, J.Perry, M.Durrant, J.Faith");
 		result.setValue(Field.YEAR, "2011");
-		result.setValue(Field.JOURNAL, "International Journal of Data Mining in Bioinformatics");
-		result.setValue(Field.TITLE,
+		result.setValue(Field.JOURNAL,
+				"International Journal of Data Mining in Bioinformatics");
+		result.setValue(
+				Field.TITLE,
 				"Predicting Functional Residues of Protein Sequence Alignments as a Feature Selection Task");
 		return result;
 	}
@@ -212,10 +216,14 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 
 		// get the size of each row in the projection
 		attributeScores = MatrixUtils.rowNorm2(model.getProjection());
+//		System.out.println("Attribute scores:\n"
+//				+ MatrixUtils.toString(attributeScores));
 
 		// find the indices of the row, ranked by size
 		// this also ranks the scores
 		attributeIndices = MatrixUtils.rank(attributeScores);
+//		System.out.println("Ranked attribute indices:\n"
+//				+ MatrixUtils.toString(attributeIndices));
 
 		// If attributes were preselected, then we need to find the indices of
 		// the attributes in the original data, rather than the indices in the
@@ -224,6 +232,9 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 			double[][] igAttributes = igSearch.rankedAttributes();
 			for (int i = 0; i < attributeIndices.length; i++)
 				attributeIndices[i] = (int) igAttributes[attributeIndices[i]][0];
+//			System.out.println("Ranked attribute indices after adjusting for pre-selection:\n"
+//					+ MatrixUtils.toString(attributeIndices));
+
 		}
 
 		// TPP just selects amongst the numerical attributes so convert indices
@@ -231,12 +242,13 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 		// corresponding attributes in the original instances
 		for (int i = 0; i < attributeIndices.length; i++)
 			attributeIndices[i] = model.indexOf(model.getNumericAttributes()
-					.get(i));
-
-		// System.out.println("Indices: " +
-		// MatrixUtils.toString(attributeIndices));
-		// System.out.println("Scores: " +
-		// MatrixUtils.toString(attributeScores));
+					.get(attributeIndices[i]));
+		
+//		System.out.println("Ranked attribute indices after allowing for non-numeric attributes:\n"
+//				+ MatrixUtils.toString(attributeIndices));
+//
+//		System.out.println("Attribute scores:\n"
+//				+ MatrixUtils.toString(attributeScores));
 
 		return attributeIndices;
 	}
@@ -247,7 +259,6 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 	public void modelChanged(TPPModelEvent e) {
 
 		if (e.getType() == TPPModelEvent.PROJECTION_CHANGED) {
-//			System.out.println("Seperation iteration " + epochs);
 
 			// some projection pursuit has been done, so display the result
 			panel.repaint();
@@ -258,7 +269,6 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 				double previous = previousProjection.normF();
 				double difference = previousProjection.minus(currentProjection)
 						.normF();
-//				System.out.println("Difference=" + difference + " limit=" s+ getConvergenceLimit());
 				// the model may have been changed due to rescaling of the
 				// window or the projection, in which case the difference will
 				// be zero and we should ignore this change
@@ -271,7 +281,7 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 							frame.setVisible(false);
 							frame.dispose();
 						}
-						System.out.println("/Stopping pursuit");
+//						System.out.println("Stopping pursuit");
 					}
 				}
 			}
@@ -354,11 +364,6 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 			rankedAttributes[i][0] = attributeIndices[i];
 			rankedAttributes[i][1] = attributeScores[i];
 		}
-
-		// System.out.println("Returning ranked attributes (index, score):");
-		// for (int i = 0; i < selected; i++)
-		// System.out.println(rankedAttributes[i][0] + "\t" +
-		// rankedAttributes[i][1]);
 		return rankedAttributes;
 	}
 
@@ -537,6 +542,7 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 		return result;
 	}
 
+	/** Test method */
 	public static void main(String[] a) throws Exception {
 
 		// Get a new data file from the file chooser
@@ -552,9 +558,9 @@ public class TPPAttributeSearch extends ASSearch implements WindowListener,
 		Instances in = new Instances(reader);
 		TPPAttributeSearch search = new TPPAttributeSearch();
 		search.setShowView(true);
-		search.setNumToSelect(10);
 		int[] results = search.search(new TPPAttributeEvaluation(), in);
-		System.out.println(MatrixUtils.toString(results));
+		System.out.println("Selected attributes:\n"+MatrixUtils.toString(results));
+		System.out.println("Ranked attributes:\n"+MatrixUtils.toString(search.rankedAttributes()));
 
 	}
 
