@@ -4,6 +4,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class TargetedProjectionPursuit {
 
+	public static final String HELP_URL = "http://code.google.com/p/targeted-projection-pursuit/wiki/Introduction";
+
 	/**
 	 * @param args
 	 * @throws UnsupportedLookAndFeelException

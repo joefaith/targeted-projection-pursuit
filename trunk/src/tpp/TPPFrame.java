@@ -1,6 +1,8 @@
 package tpp;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -15,8 +17,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,6 +32,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.UIManager;
 
@@ -104,6 +111,8 @@ public class TPPFrame extends JFrame implements ActionListener {
 
 	private DataViewer dataViewer;
 
+	private JMenuItem helpMenuItem;
+
 	public TPPFrame() {
 		super(FRAME_TITLE);
 		// LicenseChecker license = new LicenseChecker();
@@ -133,7 +142,6 @@ public class TPPFrame extends JFrame implements ActionListener {
 				(int) (screenSize.getHeight() - DEFAULT_DIMENSION.getHeight()) / 2);
 		this.setSize(DEFAULT_DIMENSION);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.add(new JLabel("For information and help with Targeted Projection Pursuit, see http://code.google.com/p/targeted-projection-pursuit/"), BorderLayout.CENTER);
 		this.setVisible(true);
 	}
 
@@ -147,8 +155,19 @@ public class TPPFrame extends JFrame implements ActionListener {
 			bar = new JMenuBar();
 			bar.add(getFileMenu());
 			bar.add(getViewMenu());
+			bar.add(getHelpMenuItem());
 		}
 		return bar;
+	}
+
+	private JMenuItem getHelpMenuItem() {
+		if (helpMenuItem == null) {
+			helpMenuItem = new JMenuItem();
+			helpMenuItem.setText("Help");
+			helpMenuItem.addActionListener(this);
+		}
+		return helpMenuItem;
+
 	}
 
 	/**
@@ -481,6 +500,8 @@ public class TPPFrame extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent action) {
+		if (action.getSource()==getHelpMenuItem())
+			browseHelp();
 		if (action.getSource() == getSaveNormalisedViewMenuItem())
 			Exporter.saveNormalisedData(model, null);
 		if (action.getSource() == getSaveProjectionMenuItem())
@@ -526,6 +547,18 @@ public class TPPFrame extends JFrame implements ActionListener {
 
 	}
 
+	private static void browseHelp() {
+		if (Desktop.isDesktopSupported()) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				desktop.browse(new URI(TargetedProjectionPursuit.HELP_URL));
+			} catch (Exception e) {
+				// TODO: error handling
+			}
+		} else {
+			// TODO: error handling
+		}
+	}
 	private void showDataViewer(boolean show) {
 		if (show) {
 			dataViewer = new DataViewer(model);
@@ -547,7 +580,8 @@ public class TPPFrame extends JFrame implements ActionListener {
 			controlPanel = new ScatterPlotControlPanel();
 			controlPanel.setModel(model);
 			viewPanel.setModel(model);
-			ScatterPlotViewPanelMouseListener l = new ScatterPlotViewPanelMouseListener(viewPanel, model);
+			ScatterPlotViewPanelMouseListener l = new ScatterPlotViewPanelMouseListener(
+					viewPanel, model);
 			viewPanel.addMouseListener(l);
 			viewPanel.addMouseMotionListener(l);
 			setTitle(model.getInstances().relationName());
