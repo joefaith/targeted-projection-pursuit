@@ -3,50 +3,37 @@ package tpp;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ComboBoxModel;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
-import javax.swing.plaf.ComboBoxUI;
-import javax.swing.plaf.basic.ComboPopup;
 
 import weka.core.Instances;
 import weka.core.TechnicalInformation;
 import weka.core.TechnicalInformation.Field;
 import weka.core.TechnicalInformation.Type;
 import weka.core.TechnicalInformationHandler;
-import weka.gui.explorer.Explorer;
-import weka.gui.explorer.PreprocessPanel;
-import weka.gui.explorer.Explorer.ExplorerPanel;
+import weka.gui.beans.KnowledgeFlowApp;
 
 /**
- * An ExplorerPanel for Targeted Projection Pursuit
+ * A KnowledgeFlow Perspective for Targeted Projection Pursuit
  */
-public class TPPExplorerPanel extends JPanel implements ExplorerPanel,
-		ComponentListener, TechnicalInformationHandler, ActionListener,
-		TPPModelEventListener {
+public class TPPPerspective extends JPanel implements
+		KnowledgeFlowApp.KFPerspective, ComponentListener,
+		TechnicalInformationHandler, ActionListener{
 
 	private ScatterPlotModel model;
 
@@ -55,8 +42,6 @@ public class TPPExplorerPanel extends JPanel implements ExplorerPanel,
 	ScatterPlotControlPanel controlPanel = null;
 
 	private DataViewer dataViewer;
-
-	private Explorer explorer;
 
 	private JSplitPane splitPane;
 
@@ -68,50 +53,91 @@ public class TPPExplorerPanel extends JPanel implements ExplorerPanel,
 
 	private JButton helpButton;
 
-	private boolean dataStructureChangeTriggeredByTPP;
-
-	private void showDataViewer(boolean show) {
-		if (show) {
-			dataViewer = new DataViewer(model);
-		} else {
-			if (dataViewer != null) {
-				dataViewer.setVisible(false);
-				dataViewer.dispose();
-			}
-		}
-
-	}
-
 	public TPPModel getModel() {
 		return model;
 	}
 
-	@Override
-	public Explorer getExplorer() {
-		return explorer;
-	}
-
-	@Override
-	public String getTabTitle() {
+	/**
+	 * Get the title of this perspective
+	 * 
+	 * @return the title of this perspective
+	 */
+	public String getPerspectiveTitle() {
 		return "Projection Plot";
 	}
 
-	@Override
-	public String getTabTitleToolTip() {
+	/**
+	 * Get the tool tip text for this perspective.
+	 * 
+	 * @return the tool tip text for this perspective
+	 */
+	public String getPerspectiveTipText() {
 		return "Explore data using Targeted Projection Pursuit";
 	}
 
-	@Override
-	public void setExplorer(Explorer e) {
-		explorer = e;
-
+	/**
+	 * Get the icon for this perspective.
+	 * 
+	 * @return the Icon for this perspective (or null if the perspective does
+	 *         not have an icon)
+	 */
+	public Icon getPerspectiveIcon() {
+		java.awt.Image pic = null;
+		System.out.println("Class loader root at "
+				+ this.getClass().getClassLoader().getResource("."));
+		java.net.URL imageURL = this.getClass().getClassLoader()
+				.getResource("tpp/tpp.png");
+		if (imageURL == null) {
+			System.out.println("failed to find icon for TPP Perspective at "
+					+ imageURL);
+			return null;
+		} else {
+			pic = java.awt.Toolkit.getDefaultToolkit().getImage(imageURL);
+			return new javax.swing.ImageIcon(pic);
+		}
 	}
 
-	@Override
+	/**
+	 * Make this perspective the active (visible) one in the KF
+	 * 
+	 * @param active
+	 *            true if this perspective is the currently active one
+	 */
+	public void setActive(boolean active) {
+	}
+
+	/**
+	 * Tell this perspective whether or not it is part of the users perspectives
+	 * toolbar in the KnowledgeFlow. If not part of the current set of
+	 * perspectives, then we can free some resources.
+	 * 
+	 * @param loaded
+	 *            true if this perspective is part of the user-selected
+	 *            perspectives in the KnowledgeFlow
+	 */
+	public void setLoaded(boolean loaded) {
+	}
+
+	/**
+	 * Set a reference to the main KnowledgeFlow perspective - i.e. the
+	 * perspective that manages flow layouts.
+	 * 
+	 * @param main
+	 *            the main KnowledgeFlow perspective.
+	 */
+	public void setMainKFPerspective(KnowledgeFlowApp.MainKFPerspective main) {
+	}
+
+	/**
+	 * Returns true if this perspective accepts instances
+	 * 
+	 * @return true if this perspective can accept instances
+	 */
+	public boolean acceptsInstances() {
+		return true;
+	}
+
 	public void setInstances(Instances in) {
-		// only respond to changes that are triggered by other panels
-		if (dataStructureChangeTriggeredByTPP)
-			return;
 		try {
 			removeAll();
 			setLayout(new BorderLayout());
@@ -131,13 +157,14 @@ public class TPPExplorerPanel extends JPanel implements ExplorerPanel,
 			rhPanel.add(controlPanel);
 			splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, viewPanel,
 					rhPanel);
-			splitPane.setDividerLocation(getParent().getSize().width - 250);
+			if (getParent() != null) {
+				splitPane.setDividerLocation(getParent().getSize().width - 250);
+			}
 			splitPane.setResizeWeight(0.8);
 			Dimension minimumSize = new Dimension(250, 250);
 			viewPanel.setMinimumSize(minimumSize);
 			rhPanel.setMinimumSize(minimumSize);
 			add(splitPane);
-			model.addListener(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this,
@@ -195,22 +222,22 @@ public class TPPExplorerPanel extends JPanel implements ExplorerPanel,
 	public void componentHidden(ComponentEvent e) {
 	}
 
-	public TPPExplorerPanel() {
+	public TPPPerspective() {
 		super();
 		addComponentListener(this);
 	}
 
-	public TPPExplorerPanel(boolean isDoubleBuffered) {
+	public TPPPerspective(boolean isDoubleBuffered) {
 		super(isDoubleBuffered);
 		addComponentListener(this);
 	}
 
-	public TPPExplorerPanel(LayoutManager layout, boolean isDoubleBuffered) {
+	public TPPPerspective(LayoutManager layout, boolean isDoubleBuffered) {
 		super(layout, isDoubleBuffered);
 		addComponentListener(this);
 	}
 
-	public TPPExplorerPanel(LayoutManager layout) {
+	public TPPPerspective(LayoutManager layout) {
 		super(layout);
 		addComponentListener(this);
 	}
@@ -292,17 +319,6 @@ public class TPPExplorerPanel extends JPanel implements ExplorerPanel,
 			if (!layingOut)
 				dim.width = Math.max(dim.width, getPreferredSize().width);
 			return dim;
-		}
-	}
-
-	public void modelChanged(TPPModelEvent e) {
-		if (e.getType() == TPPModelEvent.DATA_STRUCTURE_CHANGED) {
-			// set a flag indicating that the change in data structure comes
-			// from the TPP application, to prevent infinite loops
-			dataStructureChangeTriggeredByTPP = true;
-			getExplorer().getPreprocessPanel().setInstances(
-					model.getInstances());
-			dataStructureChangeTriggeredByTPP = false;
 		}
 	}
 
