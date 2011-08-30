@@ -50,7 +50,6 @@
 	<!-- Compile the java code from ${src}/weka into ${build}/classes -->
 	<target name="compile" depends="init_compile" description="Compile package and deposit class files in build/classes">
 		<javac srcdir="${src}" fork="yes" memoryMaximumSize="${javac_max_memory}" destdir="${build}/classes" optimize="${optimization}" debug="${debug}" deprecation="${deprecation}" source="1.6" target="1.6">
-
 			<classpath refid="project.class.path" />
 		</javac>
 		<copy todir="${build}/classes">
@@ -111,7 +110,6 @@
 		<replace file="${dist}/${package}/Description.props" token="*TODAY*" value="${TODAY}" />
 		<copy file="Explorer.props" todir="${dist}/${package}" />
 		<copy file="Beans.props" todir="${dist}/${package}" />
-		<copy file="tpp.png" todir="${dist}/${package}" />
 		<mkdir dir="${dist}/${package}/lib" />
 		<copy todir="${dist}/${package}/lib">
 			<fileset dir="${lib}">
