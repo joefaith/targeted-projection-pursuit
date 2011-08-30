@@ -13,26 +13,38 @@ import java.io.Serializable;
  */
 public class ColourScheme implements Serializable {
 
+	private static final double MARGIN = 0.00001;
+
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = -2412562737849428441L;
 
-	/** The number of colors in the ordered range. In fact this is the number of intervals in a half-range. So if INTERVAL=3 there will be 7 colors in a bipolar spectrum. */
+	/**
+	 * The number of colors in the ordered range. In fact this is the number of
+	 * intervals in a half-range. So if INTERVAL=3 there will be 7 colors in a
+	 * bipolar spectrum.
+	 */
 	public static final int INTERVALS = 3;
 	private static final float INTERVALSf = INTERVALS * 1f;
 
-	public static ColourScheme DARK = new ColourScheme(Color.black, new Color(0xC6D9EC), new Color(0x8CB3D9),
-			new Color(50, 136, 189), new Color(189, 189, 189), new Color(213, 62, 79), new Color[] {
-					new Color(228, 26, 28), new Color(55, 126, 184), new Color(77, 175, 74), new Color(152, 78, 163),
-					new Color(255, 127, 0), new Color(255, 255, 51), new Color(166, 86, 40), new Color(247, 129, 191),
-					new Color(153, 153, 153) }, "Dark background");
+	public static ColourScheme DARK = new ColourScheme(Color.black, new Color(
+			0xC6D9EC), new Color(0x8CB3D9), new Color(50, 136, 189), new Color(
+			189, 189, 189), new Color(213, 62, 79), new Color[] {
+			new Color(228, 26, 28), new Color(55, 126, 184),
+			new Color(77, 175, 74), new Color(152, 78, 163),
+			new Color(255, 127, 0), new Color(255, 255, 51),
+			new Color(166, 86, 40), new Color(247, 129, 191),
+			new Color(153, 153, 153) }, "Dark background");
 
-	public static ColourScheme LIGHT = new ColourScheme(Color.white, new Color(0xC6D9EC), new Color(0x8CB3D9),
-			new Color(50, 136, 189), new Color(255, 255, 191), new Color(213, 62, 79), new Color[] {
-					new Color(228, 26, 28), new Color(55, 126, 184), new Color(77, 175, 74), new Color(152, 78, 163),
-					new Color(255, 127, 0), new Color(255, 255, 51), new Color(166, 86, 40), new Color(247, 129, 191),
-					new Color(153, 153, 153) }, "Dark background");
+	public static ColourScheme LIGHT = new ColourScheme(Color.white, new Color(
+			0xC6D9EC), new Color(0x8CB3D9), new Color(50, 136, 189), new Color(
+			255, 255, 191), new Color(213, 62, 79), new Color[] {
+			new Color(228, 26, 28), new Color(55, 126, 184),
+			new Color(77, 175, 74), new Color(152, 78, 163),
+			new Color(255, 127, 0), new Color(255, 255, 51),
+			new Color(166, 86, 40), new Color(247, 129, 191),
+			new Color(153, 153, 153) }, "Dark background");
 
 	Color backgroundColor;
 
@@ -50,8 +62,9 @@ public class ColourScheme implements Serializable {
 
 	String description;
 
-	private ColourScheme(Color backgroundColor, Color foregroundColor, Color axesColor, Color minColor, Color midColor,
-			Color maxColor, Color[] classColors, String description) {
+	private ColourScheme(Color backgroundColor, Color foregroundColor,
+			Color axesColor, Color minColor, Color midColor, Color maxColor,
+			Color[] classColors, String description) {
 		this.backgroundColor = backgroundColor;
 		this.foregroundColor = foregroundColor;
 		this.axesColor = axesColor;
@@ -85,12 +98,16 @@ public class ColourScheme implements Serializable {
 		for (int c = 1; c <= INTERVALS; c++) {
 
 			// the positive colors
-			spectrumColors[INTERVALS + c] = new Color(Math.round(rMid + (c / INTERVALSf) * (rMax - rMid)), Math.round(gMid
-					+ (c / INTERVALSf) * (gMax - gMid)), Math.round(bMid + (c / INTERVALSf) * (bMax - bMid)));
+			spectrumColors[INTERVALS + c] = new Color(Math.round(rMid
+					+ (c / INTERVALSf) * (rMax - rMid)), Math.round(gMid
+					+ (c / INTERVALSf) * (gMax - gMid)), Math.round(bMid
+					+ (c / INTERVALSf) * (bMax - bMid)));
 
 			// the negative colors
-			spectrumColors[INTERVALS - c] = new Color(Math.round(rMid - (c / INTERVALSf) * (rMid - rMin)), Math.round(gMid
-					- (c / INTERVALSf) * (gMid - gMin)), Math.round(bMid - (c / INTERVALSf) * (bMid - bMin)));
+			spectrumColors[INTERVALS - c] = new Color(Math.round(rMid
+					- (c / INTERVALSf) * (rMid - rMin)), Math.round(gMid
+					- (c / INTERVALSf) * (gMid - gMin)), Math.round(bMid
+					- (c / INTERVALSf) * (bMid - bMin)));
 		}
 		spectrumColors[INTERVALS] = midColor;
 	}
@@ -115,15 +132,17 @@ public class ColourScheme implements Serializable {
 	 * Get a color for representing a value of c within a range of
 	 * [lower,upper].
 	 */
-	public Color getColorFromSpectrum(double c, double lowerBound, double upperBound) {
-		if (c >= upperBound)
+	public Color getColorFromSpectrum(double c, double lowerBound,
+			double upperBound) {
+		if (c > upperBound - MARGIN)
 			return spectrumColors[2 * INTERVALS];
-		if (c <= lowerBound)
+		if (c < lowerBound + MARGIN)
 			return spectrumColors[0];
 		int i;
 		double step = (upperBound - lowerBound) / (2f * INTERVALSf + 1);
 		i = (int) Math.floor((c - lowerBound) / step);
-		// System.out.println(c+" in ["+lower+","+upper+"] = "+i);
+//		System.out.println(c + " in [" + lowerBound + "," + upperBound + "] = "
+//				+ i);
 		return spectrumColors[i];
 	}
 

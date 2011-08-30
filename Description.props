@@ -40,4 +40,4 @@ PackageURL=http://targeted-projection-pursuit.googlecode.com/files/TPP-*VERSION*
 URL=http://code.google.com/p/targeted-projection-pursuit/
 
 # Dependencies
-Depends=weka (>=3.7.1)
+Depends=weka (>=3.7.4)
