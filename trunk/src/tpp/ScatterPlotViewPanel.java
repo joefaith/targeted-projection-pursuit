@@ -68,7 +68,6 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 		else {
 			spModel.addListener(this);
 			spModel.setColours(ColourScheme.DARK);
-			setBackground(spModel.getColours().getBackgroundColor());
 			noise = new Matrix(spModel.getNumDataPoints(), spModel.getNumDataDimensions());
 			spModel.initRetinalAttributes();
 			spModel.resizePlot(getWidth(), getHeight());
@@ -159,6 +158,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 			}
 			g2.setStroke(new BasicStroke((float) (LINE_WIDTH / transform.getScaleX())));
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			setBackground(spModel.getColours().getBackgroundColor());
 
 			// find out how big the markers need to be in data space in order to
 			// appear the right size in device space
