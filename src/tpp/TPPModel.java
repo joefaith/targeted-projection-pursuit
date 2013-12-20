@@ -281,7 +281,7 @@ public class TPPModel implements Serializable, Cloneable {
 	}
 
 	/** Return a description of a set of instances, based on any string attributes. */
-	public String getDescriptionOfInstance(int[] is) {
+	public String getDescriptionOfInstances(int[] is) {
 		String description = "";
 		if (descriptionAttribute == null) {
 			for (int i : is)
@@ -291,6 +291,16 @@ public class TPPModel implements Serializable, Cloneable {
 				description += ", " + instances.instance(i).stringValue(descriptionAttribute);
 		}
 		return description.substring(2);
+	}
+
+	public String getDescriptionOfInstance(int i) {
+		String description = "";
+		if (descriptionAttribute == null) {
+				description = "point #" + (i + 1);
+		} else {
+				description = instances.instance(i).stringValue(descriptionAttribute);
+		}
+		return description;
 	}
 
 	public String getDescriptionOfAttributes(int[] as) {

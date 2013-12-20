@@ -40,6 +40,11 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 
 	protected static final double LINE_WIDTH = 1.5;
 
+	private static final int X = 0;
+	private static final int Y = 1;
+	
+	private static final int BASE_FONT_SIZE=12;
+
 	/** Noise added to the view to better separate the points */
 	private Matrix jitter;
 
@@ -83,7 +88,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 		double distance;
 		Vector<Integer> points = new Vector<Integer>();
 		for (int i = 0; i < spModel.getNumDataPoints(); i++) {
-			distance = pt.distance(new Point2D.Double(spModel.getView().get(i, 0), spModel.getView().get(i, 1)));
+			distance = pt.distance(new Point2D.Double(spModel.getView().get(i, X), spModel.getView().get(i, Y)));
 			if (distance < margin)
 				points.add(new Integer(i));
 		}
@@ -103,7 +108,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 		double distance;
 		Vector<Integer> axes = new Vector<Integer>();
 		for (int i = 0; i < spModel.getNumDataDimensions(); i++) {
-			distance = pt.distance(new Point2D.Double(spModel.getProjection().get(i, 0), spModel.getProjection().get(i,
+			distance = pt.distance(new Point2D.Double(spModel.getProjection().get(i, X), spModel.getProjection().get(i,
 					1)));
 			if (distance < margin)
 				axes.add(new Integer(i));
@@ -130,21 +135,6 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 	 * markerSize=0 use the default size.
 	 */
 	public void paintView(Graphics2D g2, AffineTransform transform, int width, int height) {
-		double scaledMarkerSize = (spModel.markerSize * width);
-
-		/**
-		 * The difference between the maximum and minimum marker size (as a
-		 * proportion of screen size).
-		 */
-		double markerRange = scaledMarkerSize * 2;
-
-		/**
-		 * The minimum size of the markers to display. (as a proportion of
-		 * screen size).
-		 */
-		double markerMin = scaledMarkerSize * 0.5;
-
-		double origin = scaledMarkerSize * 2;
 
 		if (spModel != null && spModel.getData() != null) {
 
@@ -163,21 +153,14 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 			// find out how big the markers need to be in data space in order to
 			// appear the right size in device space
 			// nb this assumes that the same scale is used for both x and y
-			double markerRadius = scaledMarkerSize / transform.getScaleX();
-
-			double x, y;
-			double size;
-
-			double x1, y1, x2, y2;
-			Shape circle = null;
-			Line2D line;
+			// nb actual markers (and labels) may be further scaled depending on the size attribute
+			double markerRadius = spModel.markerSize * width / transform.getScaleX();
 
 			// If the axes are shown and there are points currently selected
 			// then colour the axes based on the values of those attributes for
 			// the selected points
-			int numPointsSelected = spModel.numPointsSelected();
 			double[] col = null;
-			if (spModel.showAxes() && (numPointsSelected > 0)) {
+			if (spModel.showAxes() && (spModel.numPointsSelected() > 0)) {
 				col = defineAxesColors();
 			}
 
@@ -198,10 +181,10 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 				drawTarget(g2, markerRadius);
 
 			// draw the points
-			drawPoints(g2, transform, markerRange, markerMin, markerRadius);
-			
+			drawPoints(g2, transform, markerRadius);
+
 			// plot the axes or just the origin
-			drawAxesOrOrigin(g2, transform, origin, markerRadius, numPointsSelected, col);
+			drawAxesOrOrigin(g2, transform,  markerRadius, col);
 
 			// draw the rectangle?
 			if (spModel.rectangle != null)
@@ -218,103 +201,132 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 
 	}
 
-	private void drawPoints(Graphics2D g2, AffineTransform transform, double markerRange, double markerMin,
-			double markerRadius) {
+	private void drawPoints(Graphics2D g2, AffineTransform transform, double markerRadius) {
+		Shape marker = null;
+		int i;
+		Graphics labelGraphics = getGraphics();
+
+		for (i = 0; i < spModel.getNumDataPoints(); i++) {
+
+			// if shaping the point using a string attribute and the point isn't
+			// selected then draw a label, otherwise a marker
+			if (spModel.getShapeAttribute() != null && spModel.getShapeAttribute().isString()
+					&& !spModel.isPointSelected(i))
+				drawLabelAtPoint(transform, i, labelGraphics);
+			else
+				drawMarkerAtPoint(g2, transform, markerRadius, marker, i);
+		}
+	}
+
+	private void drawMarkerAtPoint(Graphics2D g2, AffineTransform transform,
+			double markerRadius, Shape marker, int i) {
 		double x;
 		double y;
 		double size;
-		Shape marker=null;
-		int i;
-		for (i = 0; i < spModel.getNumDataPoints(); i++) {
+		// so we are showing points using a shaped marker rather than text
+		setColourOfPoint(g2, i);
 
-			// Color of the point depends on whether we are coloring by
-			// a numeric or nominal attribute
-			if (spModel.getColourAttribute() == null)
-				g2.setColor(spModel.getColours().getForegroundColor());
-			else {
-				if (spModel.getColourAttribute().isNominal())
-					g2.setColor(spModel.getColours().getClassificationColor(
-							(int) spModel.getInstances().instance(i).value(spModel.getColourAttribute())));
-				if (spModel.getColourAttribute().isNumeric())
-					g2.setColor(spModel.getColours().getColorFromSpectrum(
-							spModel.getInstances().instance(i).value(spModel.getColourAttribute()),
-							spModel.colorAttributeLowerBound, spModel.colorAttributeUpperBound));
+		// Size of the marker depends on size attribute
+		if (spModel.getSizeAttribute() == null)
+			size = markerRadius;
+		else
+			size = ( 0.5 + (spModel.getInstances().instance(i).value(spModel.getSizeAttribute()) - spModel.sizeAttributeLowerBound)
+					/ (spModel.sizeAttributeUpperBound - spModel.sizeAttributeLowerBound))*markerRadius;
+
+		// position of marker
+		x = spModel.getView().get(i, X) + jitter.get(i, X);
+		y = spModel.getView().get(i, Y) + jitter.get(i, Y);
+
+		// if the point is selected then draw cross hairs
+		if (spModel.isPointSelected(i)) {
+			g2.draw(new Line2D.Double(x - size, y, x + size, y));
+			g2.draw(new Line2D.Double(x, y - size, x, y + size));
+			return;
+		}
+		
+		// if the shape attribute is numeric, then choose a
+		// shape based on it
+		if (spModel.getShapeAttribute() != null && spModel.getShapeAttribute().isNumeric())
+			marker = MarkerFactory.buildMarker((int) spModel.instances.instance(i).value(spModel.getShapeAttribute()),
+					x, y, size);
+
+		// if there's no shape marker, then just use the default
+		// shape
+		if (spModel.getShapeAttribute() == null)
+			marker = MarkerFactory.buildMarker(0, x, y, size);
+
+		// if there's no fill attribute, use the default fill
+		if (spModel.getFillAttribute() == null) {
+			g2.fill(marker);
+		} else {
+			// otherwise the type of fill depends on the value
+			// of the fill attribute
+			switch ((int) spModel.instances.instance(i).value(spModel.getFillAttribute())) {
+			case 0: {
+				g2.fill(marker);
+				break;
 			}
-
-			// Size of the marker depends on size attribute
-			if (spModel.getSizeAttribute() == null)
-				size = markerRadius;
-			else
-				size = (markerMin + markerRange
-						* (spModel.getInstances().instance(i).value(spModel.getSizeAttribute()) - spModel.sizeAttributeLowerBound)
-						/ (spModel.sizeAttributeUpperBound - spModel.sizeAttributeLowerBound))
-						/ transform.getScaleX();
-
-			// position of marker
-			x = spModel.getView().get(i, 0) + jitter.get(i, 0);
-			y = spModel.getView().get(i, 1) + jitter.get(i, 1);
-
-			// if the point is selected then draw cross hairs
-			if (spModel.isPointSelected(i)) {
-				g2.draw(new Line2D.Double(x - size, y, x + size, y));
-				g2.draw(new Line2D.Double(x, y - size, x, y + size));
-			} else {
-
-				// if we are shaping the points by a string attribute then
-				// write label to the right of the marker
-				if (spModel.getShapeAttribute() != null && spModel.getShapeAttribute().isString()) {
-					// write label to the right of the marker
-					Point2D labelLocationInDeviceSpace = null;
-					labelLocationInDeviceSpace = transform.transform(new Point2D.Double(spModel.getProjection()
-							.get(i, 0), spModel.getProjection().get(i, 1)), labelLocationInDeviceSpace);
-					try {
-						Graphics labelGraphics = getGraphics();
-						labelGraphics.drawString(spModel.getNumericAttributes().get(i).name(),
-								(int) labelLocationInDeviceSpace.getX(), (int) labelLocationInDeviceSpace.getY());
-					} catch (Exception e) {
-						System.out.println(e);
-					}
-				}
-
-				// so we are showing points using a shaped marker
-				else {
-					// if the shape attribute is numeric, then choose a
-					// shape based on it
-					if (spModel.getShapeAttribute() != null && spModel.getShapeAttribute().isNumeric())
-						marker = MarkerFactory.buildMarker(
-								(int) spModel.instances.instance(i).value(spModel.getShapeAttribute()), x, y, size);
-
-					// if there's no shape marker, then just use the default
-					// shape
-					if (spModel.getShapeAttribute() == null)
-						marker = MarkerFactory.buildMarker(0, x, y, size);
-
-					// if there's no fill attribute, use the default fill
-					if (spModel.getFillAttribute() == null) {
-						g2.fill(marker);
-					} else {
-						// otherwise the type of fill depends on the value
-						// of the fill attribute
-						switch ((int) spModel.instances.instance(i).value(spModel.getFillAttribute())) {
-						case 0: {
-							g2.fill(marker);
-							break;
-						}
-						case 1: {
-							g2.draw(marker);
-							break;
-						}
-						default: {
-							// TODO add more textures for filling points
-							// (shaded
-							// lines etc)
-							g2.draw(marker);
-
-						}
-						}
-					}
-				}
+			case 1: {
+				g2.draw(marker);
+				break;
 			}
+			default: {
+				// TODO add more textures for filling points
+				// (shaded
+				// lines etc)
+				g2.draw(marker);
+
+			}
+			}
+		}
+	}
+
+	private void drawLabelAtPoint(AffineTransform transform,int i, Graphics labelGraphics) {
+		// if we are shaping the points by a string attribute then
+		// write label centered on the position of the marker
+		// NB we write the labels in device space rather than in data space,
+		// since fonts don't scale nicely under a transform
+		double size;
+		String label;
+		double textWidth;
+		double textHeight;
+		// write label to the right of the marker
+		Point2D pointLocationInDeviceSpace = null;
+		pointLocationInDeviceSpace = transform.transform(new Point2D.Double(spModel.getView().get(i, X), spModel
+				.getView().get(i, Y)), pointLocationInDeviceSpace);
+
+		// Size of the marker depends on size attribute
+		if (spModel.getSizeAttribute() == null)
+			size = BASE_FONT_SIZE*spModel.getMarkerSize()/spModel.MARKER_DEFAULT;
+		else
+			size = (0.5+(spModel.getInstances().instance(i).value(spModel.getSizeAttribute()) - spModel.sizeAttributeLowerBound)
+					/ (spModel.sizeAttributeUpperBound - spModel.sizeAttributeLowerBound))*BASE_FONT_SIZE*spModel.getMarkerSize()/spModel.MARKER_DEFAULT;
+
+		setColourOfPoint(labelGraphics, i);
+		label = spModel.getDescriptionOfInstance(i);
+		labelGraphics.setFont(labelGraphics.getFont().deriveFont((float) size));
+		textWidth = labelGraphics.getFontMetrics().getStringBounds(label, labelGraphics).getWidth();
+		textHeight = labelGraphics.getFontMetrics().getStringBounds(label, labelGraphics).getHeight();
+		labelGraphics.drawString(spModel.getDescriptionOfInstance(i),
+				(int) (pointLocationInDeviceSpace.getX() - (textWidth / 2)),
+				(int) (pointLocationInDeviceSpace.getY() + (textHeight / 2)));
+	}
+
+	/**
+	 * Color of the point depends on whether we are coloring by a numeric or
+	 * nominal attribute.
+	 */
+	private void setColourOfPoint(Graphics g, int i) {
+		if (spModel.getColourAttribute() == null)
+			g.setColor(spModel.getColours().getForegroundColor());
+		else {
+			if (spModel.getColourAttribute().isNominal())
+				g.setColor(spModel.getColours().getClassificationColor(
+						(int) spModel.getInstances().instance(i).value(spModel.getColourAttribute())));
+			if (spModel.getColourAttribute().isNumeric())
+				g.setColor(spModel.getColours().getColorFromSpectrum(
+						spModel.getInstances().instance(i).value(spModel.getColourAttribute()),
+						spModel.colorAttributeLowerBound, spModel.colorAttributeUpperBound));
 		}
 	}
 
@@ -322,7 +334,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 	 * If the axes are shown and there are points currently selected then colour
 	 * the axes based on the values of those attributes for the selected points
 	 * 
-	 * col = (means-min) / (max-min) where col = used to colour the axis (0,1)
+	 * col = (means-min) / (max-min) where col = used to colour the axis (0,Y)
 	 * means = mean of this attribute for the selected points min,max = min,max
 	 * of this attribute for all points
 	 */
@@ -332,7 +344,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 		Matrix mPointsSelected = new Matrix(1, spModel.getNumDataPoints());
 		for (p = 0; p < spModel.getNumDataPoints(); p++)
 			if (spModel.isPointSelected(p))
-				mPointsSelected.set(0, p, 1);
+				mPointsSelected.set(0, p, Y);
 		Matrix means = mPointsSelected.times(spModel.getData()).times(1d / spModel.numPointsSelected());
 		Matrix min = MatrixUtils.columnMin(spModel.getData());
 		Matrix max = MatrixUtils.columnMax(spModel.getData());
@@ -340,8 +352,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 		return col;
 	}
 
-	private void drawAxesOrOrigin(Graphics2D g2, AffineTransform transform, double origin, double markerRadius,
-			int numPointsSelected, double[] col) {
+	private void drawAxesOrOrigin(Graphics2D g2, AffineTransform transform, double markerRadius, double[] col) {
 		int i;
 		if (spModel.showAxes()) {
 
@@ -358,23 +369,23 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 
 				// If there are any point(s) selected then color the axes by
 				// their (average) weight with the selected point(s)
-				if (numPointsSelected > 0)
+				if (spModel.numPointsSelected() > 0)
 					g2.setColor(spModel.getColours().getColorFromSpectrum(col[i], 0, 1));
 				// otherwise highlight the axis if it is selected
 				else
 					g2.setColor((spModel.isAxisSelected(i) ? spModel.getColours().getForegroundColor() : spModel
 							.getColours().getAxesColor()));
-				g2.draw(new Line2D.Double(0, 0, spModel.getProjection().get(i, 0), spModel.getProjection().get(i, 1)));
+				g2.draw(new Line2D.Double(0, 0, spModel.getProjection().get(i, X), spModel.getProjection().get(i, Y)));
 				if (spModel.isAxisSelected(i))
-					g2.fill(new Ellipse2D.Double(spModel.getProjection().get(i, 0) - markerRadius, spModel
-							.getProjection().get(i, 1) - markerRadius, markerRadius * 2, markerRadius * 2));
+					g2.fill(new Ellipse2D.Double(spModel.getProjection().get(i, X) - markerRadius, spModel
+							.getProjection().get(i, Y) - markerRadius, markerRadius * 2, markerRadius * 2));
 
 				if (spModel.showAxisLabels()) {
 
 					// write label to the right of the marker
 					Point2D labelLocationInDeviceSpace = null;
 					labelLocationInDeviceSpace = transform.transform(
-							new Point2D.Double(spModel.getProjection().get(i, 0), spModel.getProjection().get(i, 1)),
+							new Point2D.Double(spModel.getProjection().get(i, X), spModel.getProjection().get(i, Y)),
 							labelLocationInDeviceSpace);
 					try {
 						labelGraphics.drawString(spModel.getNumericAttributes().get(i).name(),
@@ -386,9 +397,9 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 
 			}
 		} else {
-			double originSize = origin / transform.getScaleX();
+			double originSize = markerRadius;
 			g2.setColor(spModel.getColours().getAxesColor());
-			g2.draw(new Line2D.Double(-originSize, 0, originSize, 0));
+			g2.draw(new Line2D.Double(-originSize, 0, originSize, X));
 			g2.draw(new Line2D.Double(0, -originSize, 0, originSize));
 		}
 	}
@@ -400,8 +411,8 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 		int i;
 		g2.setColor(spModel.getColours().getAxesColor());
 		for (i = 0; i < spModel.getNumDataPoints(); i++) {
-			x = spModel.getTarget().get(i, 0);
-			y = spModel.getTarget().get(i, 1);
+			x = spModel.getTarget().get(i, X);
+			y = spModel.getTarget().get(i, Y);
 			circle = new Ellipse2D.Double(x - markerRadius, y - markerRadius, markerRadius * 2, markerRadius * 2);
 			g2.draw(circle);
 		}
@@ -449,12 +460,12 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 			// System.out.println(target.stringValue(0));
 
 			i = spModel.indexOf(source);
-			x1 = spModel.getView().get(i, 0) + jitter.get(i, 0);
-			y1 = spModel.getView().get(i, 1) + jitter.get(i, 1);
+			x1 = spModel.getView().get(i, X) + jitter.get(i, X);
+			y1 = spModel.getView().get(i, Y) + jitter.get(i, Y);
 
 			j = spModel.indexOf(target);
-			x2 = spModel.getView().get(j, 0) + jitter.get(j, 0);
-			y2 = spModel.getView().get(j, 1) + jitter.get(j, 1);
+			x2 = spModel.getView().get(j, X) + jitter.get(j, X);
+			y2 = spModel.getView().get(j, Y) + jitter.get(j, Y);
 			line = new Line2D.Double(x1, y1, x2, y2);
 			g2.draw(line);
 			// g2.fill(MarkerFactory.buildArrowHead(line,
@@ -479,14 +490,14 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 
 				// find the start point
 				i = spModel.indexOf(nextSeries.next());
-				x1 = spModel.getView().get(i, 0) + jitter.get(i, 0);
-				y1 = spModel.getView().get(i, 1) + jitter.get(i, 1);
+				x1 = spModel.getView().get(i, X) + jitter.get(i, X);
+				y1 = spModel.getView().get(i, Y) + jitter.get(i, Y);
 				while (nextSeries.hasNext()) {
 
 					// and draw a line to the next point
 					i = spModel.indexOf(nextSeries.next());
-					x2 = spModel.getView().get(i, 0) + jitter.get(i, 0);
-					y2 = spModel.getView().get(i, 1) + jitter.get(i, 1);
+					x2 = spModel.getView().get(i, X) + jitter.get(i, X);
+					y2 = spModel.getView().get(i, Y) + jitter.get(i, Y);
 					line = new Line2D.Double(x1, y1, x2, y2);
 					g2.draw(line);
 					// g2.fill(MarkerFactory.buildArrowHead(line,
@@ -520,7 +531,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 			c1 = (HierarchicalCluster) cluster.get(1);
 			p0 = spModel.projection.project(c0.getCentroid());
 			p1 = spModel.projection.project(c1.getCentroid());
-			Double line = new Line2D.Double(p0.get(0, 0), p0.get(0, 1), p1.get(0, 0), p1.get(0, 1));
+			Double line = new Line2D.Double(p0.get(0, X), p0.get(0, Y), p1.get(0, X), p1.get(0, Y));
 			g2.draw(line);
 			drawClusterArc(c0, g2);
 			drawClusterArc(c1, g2);

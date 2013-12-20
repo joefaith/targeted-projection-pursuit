@@ -113,6 +113,8 @@ public class TPPFrame extends JFrame implements ActionListener {
 
 	private JMenuItem helpMenuItem;
 
+	private JMenuItem showAxisLabelMenuItem;
+
 	public TPPFrame() {
 		super(FRAME_TITLE);
 		// LicenseChecker license = new LicenseChecker();
@@ -332,6 +334,7 @@ public class TPPFrame extends JFrame implements ActionListener {
 			viewMenu.add(getPCAMenuItem());
 			viewMenu.add(getRandomMenuItem());
 			viewMenu.add(getShowAxesMenuItem());
+			viewMenu.add(getShowAxisLabelsMenuItem());
 			viewMenu.add(getShowHierarchicalClusteringMenuItem());
 			viewMenu.add(getAddNoiseMenuItem());
 			viewMenu.add(getShowTargetMenuItem());
@@ -363,6 +366,17 @@ public class TPPFrame extends JFrame implements ActionListener {
 			showAxesMenuItem.addActionListener(this);
 		}
 		return showAxesMenuItem;
+	}
+
+	private JMenuItem getShowAxisLabelsMenuItem() {
+		if (showAxisLabelMenuItem == null) {
+			showAxisLabelMenuItem = new JRadioButtonMenuItem();
+			showAxisLabelMenuItem.setText("Show Axis Labels");
+			showAxisLabelMenuItem.setEnabled(false);
+			showAxisLabelMenuItem.setSelected(false);
+			showAxisLabelMenuItem.addActionListener(this);
+		}
+		return showAxisLabelMenuItem;
 	}
 
 	private JMenuItem getShowDataViewerMenuItem() {
@@ -468,7 +482,9 @@ public class TPPFrame extends JFrame implements ActionListener {
 		getRandomMenuItem().setEnabled(true);
 		getShowAxesMenuItem().setEnabled(true);
 		getShowHierarchicalClusteringMenuItem().setEnabled(true);
-		getShowAxesMenuItem().setSelected(false);
+		getShowAxesMenuItem().setSelected(true);
+		getShowAxisLabelsMenuItem().setEnabled(true);
+		getShowAxisLabelsMenuItem().setSelected(false);
 		getShowAxesMenuItem().setEnabled(true);
 		getShowTargetMenuItem().setEnabled(true);
 		getShowTargetMenuItem().setSelected(false);
@@ -492,6 +508,7 @@ public class TPPFrame extends JFrame implements ActionListener {
 		getPCAMenuItem().setEnabled(false);
 		getRandomMenuItem().setEnabled(false);
 		getShowAxesMenuItem().setEnabled(false);
+		getShowAxisLabelsMenuItem().setEnabled(false);
 		getShowHierarchicalClusteringMenuItem().setEnabled(false);
 		getShowTargetMenuItem().setEnabled(false);
 		getAddNoiseMenuItem().setEnabled(false);
@@ -528,8 +545,12 @@ public class TPPFrame extends JFrame implements ActionListener {
 			model.PCA();
 		if (action.getSource() == getRandomMenuItem())
 			model.randomProjection();
-		if (action.getSource() == getShowAxesMenuItem())
+		if (action.getSource() == getShowAxesMenuItem()) {
 			model.setShowAxes(getShowAxesMenuItem().isSelected());
+			getShowAxisLabelsMenuItem().setEnabled(getShowAxesMenuItem().isSelected());
+		}
+		if (action.getSource() == getShowAxisLabelsMenuItem())
+			model.setShowAxisLabels(getShowAxisLabelsMenuItem().isSelected());
 		if (action.getSource() == getShowHierarchicalClusteringMenuItem())
 			model.setShowHierarchicalClustering(getShowHierarchicalClusteringMenuItem()
 					.isSelected());
