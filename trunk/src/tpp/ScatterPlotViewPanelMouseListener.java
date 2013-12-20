@@ -156,7 +156,7 @@ class ScatterPlotViewPanelMouseListener implements MouseListener,
 			break;
 		case MOUSE_ON_POINT:
 			panel.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-			panel.setToolTipText(model.getDescriptionOfInstance(nearestPoints));
+			panel.setToolTipText(model.getDescriptionOfInstances(nearestPoints));
 			break;
 		case MOUSE_ON_AXIS:
 			panel.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
