@@ -81,6 +81,8 @@ public class SeparatePoints implements PerturbationPursuit {
 		model.setTarget(model.getView().plus(new Matrix(movement)));
 		model.pursueTarget();
 	}
+	
+	
 	private void separateByNumeric() throws TPPException {
 
 		if (model.getNumViewDimensions() != 2)

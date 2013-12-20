@@ -82,6 +82,7 @@ class ScatterPlotViewPanelMouseListener implements MouseListener,
 			mousePosition = getMousePosition(e);
 		} catch (NoninvertibleTransformException e1) {
 			printErrorMsg();
+			setMouseState(MOUSE_DEFAULT);
 			return;
 		}
 
@@ -216,6 +217,9 @@ class ScatterPlotViewPanelMouseListener implements MouseListener,
 
 			// if we are on axes then select those axes
 			if (mouseState == MOUSE_ON_AXIS) {
+				
+				// if we are clicking on an axis that is already selected, then don't change the selection
+				
 				// if CTRL not pressed then start a new selection
 				if (!e.isControlDown())
 					model.unselectAxes();

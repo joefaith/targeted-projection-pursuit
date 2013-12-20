@@ -10,7 +10,7 @@
 
 	<!-- set global properties for this build -->
 	<property name="package" value="TPP" />
-	<property name="version" value="1.0.5" />
+	<property name="version" value="1.0.7" />
 	<property name="src" value="src" />
 	<property name="lib" value="lib" />
 	<property name="build" value="build" />

@@ -159,6 +159,7 @@ public class MatrixUtils {
 
 	}
 
+
 	/** Find the stdev of an array of doubles. */
 	public static double stdev(double[] x) {
 		double n = x.length;
@@ -416,6 +417,23 @@ public class MatrixUtils {
 		return means;
 	}
 
+	/** The max's of each column */
+	public static Matrix columnMax(Matrix m) {
+		Matrix max = new Matrix(1, m.getColumnDimension());
+		for (int col = 0; col < max.getColumnDimension(); col++)
+			max.set(0, col, MatrixUtils.max(MatrixUtils.getColumn(m, col)));
+		return max;
+	}
+
+	/** The min's of each column */
+	public static Matrix columnMin(Matrix m) {
+		Matrix min = new Matrix(1, m.getColumnDimension());
+		for (int col = 0; col < min.getColumnDimension(); col++)
+			min.set(0, col, MatrixUtils.min(MatrixUtils.getColumn(m, col)));
+		return min;
+	}
+
+
 	/** The means of each column */
 	public static double[] columnMeans(double[][] m) {
 		double[] means = new double[m[0].length];
@@ -484,6 +502,29 @@ public class MatrixUtils {
 				min = a[i];
 		}
 		return new double[] { min, max };
+
+	}
+
+	/** The min of a set of numbers */
+	public static double min(double[] a) {
+		double min = -1;
+		for (int i = 0; i < a.length; i++) {
+			if (min == -1 || a[i] < min)
+				min = a[i];
+		}
+		return min;
+
+	}
+
+
+	/** The max of a set of numbers */
+	public static double max(double[] a) {
+		double max = -1;
+		for (int i = 0; i < a.length; i++) {
+			if (max == -1 || a[i] > max)
+				max = a[i];
+		}
+		return max;
 
 	}
 

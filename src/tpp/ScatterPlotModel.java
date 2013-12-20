@@ -412,6 +412,7 @@ public class ScatterPlotModel extends TPPModel implements Cloneable {
 
 	// == Other graph decoration =======================
 
+
 	/** Whether or not to show the axes. */
 	protected boolean showAxes = true;
 
@@ -423,6 +424,21 @@ public class ScatterPlotModel extends TPPModel implements Cloneable {
 
 	public boolean showAxes() {
 		return showAxes;
+	}
+
+	
+	/** Whether or not to show axis labels. */
+	protected boolean showAxisLabels = false;
+	
+	/** Whether or not to show axis labels. */
+	public boolean showAxisLabels() {
+		return showAxisLabels;
+	}
+
+	/** Whether or not to show axis labels. */
+	public void setShowAxisLabels(boolean showAxisLabels) {
+		this.showAxisLabels = showAxisLabels;
+		fireModelChanged(TPPModelEvent.DECORATION_CHANGED);
 	}
 
 	/** Whether to show the target currently being pursued */
@@ -498,7 +514,7 @@ public class ScatterPlotModel extends TPPModel implements Cloneable {
 		return getTestAttribute();
 	}
 
-	// == Transforming date space into device space ===================
+	// == Transforming data space into device space ===================
 
 	/**
 	 * How big is the margin round the points as a proportion of the overall
@@ -506,7 +522,7 @@ public class ScatterPlotModel extends TPPModel implements Cloneable {
 	 */
 	private static final double PANEL_MARGIN = .1d;
 
-	/** THe transform for transforming points from daa space to device space */
+	/** The transform for transforming points from data space to device space */
 	private AffineTransform transform;
 
 	/** The size of the device space */
