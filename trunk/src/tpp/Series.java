@@ -41,7 +41,7 @@ public class Series {
 
 	/**
 	 * Create a series given just the names of the two attributes.
-	 *
+	 * 
 	 * @throws TPPException
 	 *             if indexAttribute cannot be recognised
 	 */
@@ -161,7 +161,7 @@ public class Series {
 	/**
 	 * Find the index of the previous instance, given the index of an instance.
 	 * Returns -1 if the instance was first in the series.
-	 *
+	 * 
 	 * @throws TPPException
 	 */
 	public int previous(int i) {
@@ -172,10 +172,10 @@ public class Series {
 	/**
 	 * Find the index of the next instance, given the index of an instance.
 	 * Returns -1 if the instance was last in the series.
-	 *
+	 * 
 	 * @throws TPPException
 	 */
-	public int next(int i){
+	public int next(int i) {
 		Instance next = next(instances.instance(i));
 		return (next != null ? indexOfInstance(next) : -1);
 	}
@@ -195,11 +195,11 @@ public class Series {
 	/** Compare two instances by the value of the attribute. */
 	private class InstanceComparator implements Comparator {
 
-		private static final int O1_LESS_THAN_02 = -1;
+		private static final int O1_LESS_THAN_O2 = -1;
 
-		private static final int O1_GREATER_THAN_02 = +1;
+		private static final int O1_GREATER_THAN_O2 = +1;
 
-		private static final int O1_EQUALS_02 = 0;
+		private static final int O1_EQUALS_O2 = 0;
 
 		private Attribute at;
 
@@ -210,12 +210,12 @@ public class Series {
 		public int compare(Object o1, Object o2) {
 
 			if (((Instance) o1).value(at) == ((Instance) o2).value(at))
-				return O1_EQUALS_02;
+				return O1_EQUALS_O2;
 
 			// if the attribute is numeric or a date, compare numeric values
 			// directly
 			if (at.isNumeric() || at.isDate())
-				return (((Instance) o1).value(at) < ((Instance) o2).value(at) ? O1_LESS_THAN_02 : O1_GREATER_THAN_02);
+				return (((Instance) o1).value(at) < ((Instance) o2).value(at) ? O1_LESS_THAN_O2 : O1_GREATER_THAN_O2);
 
 			// if the attribute is nominal or string, compare string values
 			// ignoring case

@@ -539,7 +539,7 @@ public class TPPFrame extends JFrame implements ActionListener {
 			model.setColours(getDarkBackgroundMenuItem().isSelected() ? ColourScheme.DARK
 					: ColourScheme.LIGHT);
 		if (action.getSource() == getAddNoiseMenuItem())
-			viewPanel.addNoise(getAddNoiseMenuItem().isSelected());
+			viewPanel.addJitter(getAddNoiseMenuItem().isSelected());
 		if (action.getSource() == getRemoveGraphMenuItem())
 			model.removeGraph();
 		if (action.getSource() == getShowDataViewerMenuItem())
@@ -599,7 +599,7 @@ public class TPPFrame extends JFrame implements ActionListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this,
-					"There was a problem reading that data");
+					"There was a problem reading that data: "+e.getMessage());
 		}
 	}
 

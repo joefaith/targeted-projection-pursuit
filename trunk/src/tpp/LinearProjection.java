@@ -13,11 +13,6 @@ import weka.core.matrix.SingularValueDecomposition;
 public class LinearProjection extends Matrix implements Projection {
 
 	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1343300372331771870L;
-
-	/**
 	 * The minimum value allowed when computing PCAs. NB could probably be set
 	 * less than this, but use this value for safety. For more information see
 	 * http://www.netlib.org/na-digest-html/90/v90n18.html#5
@@ -31,7 +26,7 @@ public class LinearProjection extends Matrix implements Projection {
 	 * The default rate for training the neural network. The actual rate used
 	 * may be less than this if the network starts to diverge.
 	 */
-	private static final double TRAINING_RATE = 0.2d;
+	private static final double DEFAULT_TRAINING_RATE = 0.2d;
 
 	/**
 	 * Stop training the neural network when the error is less than
@@ -45,6 +40,15 @@ public class LinearProjection extends Matrix implements Projection {
 
 	/** The maximum number of epochs to train for */
 	private static final int TRAINING_EPOCH_LIMIT = 500;
+
+	/** The max rate at which the error can increase before we reduce the training rate */ 
+	private static final double MAXIMUM_DIVERGENCE = 1.05d;
+
+	/** The rate at which we reduce the training rate if the error is increasing */
+	private static final double TRAINING_RATE_DECELERATION = .5d;
+
+	/** The minimum training rate */
+	private static final double MIN_TRAINING_RATE = 1E-10;
 
 	private double[][] previousWeights;
 
@@ -97,7 +101,7 @@ public class LinearProjection extends Matrix implements Projection {
 			e.printStackTrace();
 		}
 		double previousError, currentError = 0;
-		rate = TRAINING_RATE / data.getRowDimension();
+		rate = DEFAULT_TRAINING_RATE / data.getRowDimension();
 		double normTarget = normF(target, inTrainingSet);
 		if (normTarget < MIN_VALUE)
 			throw new RuntimeException("norm of target is zero");
@@ -123,21 +127,19 @@ public class LinearProjection extends Matrix implements Projection {
 			currentError = normF(currentOutput.minus(target), inTrainingSet)
 					/ normTarget;
 
-			// System.out.println("epoch=" + epoch + "\tRate: " + rate +
-			// "\tError: " + currentError);
+//			 System.out.println("epoch=" + epoch + "\tRate: " + rate +"\tError: " + currentError);
 
 			// if network has converged then quit
 			if (abs(currentError - previousError) / previousError < TRAINING_CONVERGENCE_MARGIN)
 				return currentError;
 
 			// if the net diverged by more than 5%then reduce the rate and reset
-			// values to
-			// previous
-			if (currentError > (previousError * 1.05d)) {
+			// values to previous
+			if (currentError > (previousError * MAXIMUM_DIVERGENCE)) {
 				// if we cannot reduce the rate any further then quit
-				if (rate < 1E-10)
+				if (rate < MIN_TRAINING_RATE)
 					return previousError;
-				rate = rate * .5d;
+				rate = rate * TRAINING_RATE_DECELERATION;
 				setValues(previousWeights);
 			} else {
 				previousError = currentError;

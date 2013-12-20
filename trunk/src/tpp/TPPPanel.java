@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -27,7 +28,8 @@ import weka.core.TechnicalInformation.Field;
 import weka.core.TechnicalInformation.Type;
 
 /** A panel for performing TPP which does everything except load the data. */
-public class TPPPanel extends JPanel implements ActionListener, ComponentListener {
+public class TPPPanel extends JPanel implements ActionListener,
+		ComponentListener {
 
 	protected ScatterPlotModel model;
 	protected ScatterPlotViewPanel viewPanel;
@@ -84,7 +86,8 @@ public class TPPPanel extends JPanel implements ActionListener, ComponentListene
 			model.setInstances(in);
 			viewPanel = new ScatterPlotViewPanel();
 			viewPanel.setModel(model);
-			ScatterPlotViewPanelMouseListener l = new ScatterPlotViewPanelMouseListener(viewPanel, model);
+			ScatterPlotViewPanelMouseListener l = new ScatterPlotViewPanelMouseListener(
+					viewPanel, model);
 			viewPanel.addMouseListener(l);
 			viewPanel.addMouseMotionListener(l);
 			controlPanel = new ScatterPlotControlPanel();
@@ -93,9 +96,11 @@ public class TPPPanel extends JPanel implements ActionListener, ComponentListene
 			rhPanel.setLayout(new BoxLayout(rhPanel, BoxLayout.Y_AXIS));
 			rhPanel.add(getToolBar());
 			rhPanel.add(controlPanel);
-			splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, viewPanel, rhPanel);
+			splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, viewPanel,
+					rhPanel);
 			add(splitPane);
-			// try to work out a reasonable initial position for the initial divider location
+			// try to work out a reasonable initial position for the initial
+			// divider location
 			if (getParent() != null && getParent().getSize().width > 800)
 				splitPane.setDividerLocation(getParent().getSize().width - 250);
 			else
@@ -106,7 +111,10 @@ public class TPPPanel extends JPanel implements ActionListener, ComponentListene
 			rhPanel.setMinimumSize(minimumSize);
 		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "There was a problem reading that data");
+			removeAll();
+			setLayout(new BorderLayout());
+			add(new JLabel("This data cannot be shown as a projection: "
+					+ e.getMessage()), BorderLayout.CENTER);
 		}
 	}
 
@@ -116,11 +124,14 @@ public class TPPPanel extends JPanel implements ActionListener, ComponentListene
 		JPanel toolbar = new JPanel();
 		toolbar.setLayout(new GridLayout(1, 3, 6, 2));
 		toolbar.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6));
-		fileCombo = new WideComboBox(new String[] { "File", " Save projection", " Save view",
-				" Save view as EPS image", " Save view as SVG image" });
-		viewCombo = new WideComboBox(new String[] { "View", " Project onto first two principal components",
-				" Resize view to fit to window (right mouse button)", " Show/Hide axes", " Random projection",
-				" Dark background", " Light background" });
+		fileCombo = new WideComboBox(new String[] { "File", " Save projection as CSV",
+				" Save view as CSV", " Save view as EPS image",
+				" Save view as SVG image" });
+		viewCombo = new WideComboBox(new String[] { "View",
+				" Project onto first two principal components",
+				" Resize view to fit to window (right mouse button)",
+				" Show/Hide axes", " Random projection", " Dark background",
+				" Light background", " Show/Hide axis labels" });
 		helpButton = new JButton("Help");
 		helpButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -197,6 +208,9 @@ public class TPPPanel extends JPanel implements ActionListener, ComponentListene
 			case 6:
 				model.setColours(ColourScheme.LIGHT);
 				break;
+			case 7:
+				model.setShowAxisLabels(!(model.showAxisLabels()));
+				break;
 			}
 			viewCombo.setSelectedIndex(0);
 		}
@@ -206,9 +220,12 @@ public class TPPPanel extends JPanel implements ActionListener, ComponentListene
 		TechnicalInformation info = new TechnicalInformation(Type.ARTICLE);
 		info.setValue(Field.AUTHOR, "Faith,J");
 		info.setValue(Field.YEAR, "2007");
-		info.setValue(Field.TITLE,
+		info.setValue(
+				Field.TITLE,
 				"Targeted Projection Pursuit for Interactive Exploration of High-Dimensional Data Sets");
-		info.setValue(Field.JOURNAL, "Proceedings of 11th International Conference on Information Visualisation (IV07)");
+		info.setValue(
+				Field.JOURNAL,
+				"Proceedings of 11th International Conference on Information Visualisation (IV07)");
 		return info;
 	}
 

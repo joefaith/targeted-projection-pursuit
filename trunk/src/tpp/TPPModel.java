@@ -91,7 +91,7 @@ public class TPPModel implements Serializable, Cloneable {
 
 	private Vector<TPPModelEventListener> listeners;
 
-	/* The numeric attributes -- doesn't include date attributes */
+	/** The numeric (excluding date) attributes */
 	private Vector<Attribute> numericAttributes;
 
 	private Attribute descriptionAttribute;
@@ -150,10 +150,10 @@ public class TPPModel implements Serializable, Cloneable {
 		// See if there is a string attribute we could use for describing the
 		// points
 		descriptionAttribute = null;
-		for (int a = 0; a < instances.numAttributes(); a++)
-			if (instances.attribute(a).isString())
+		int a = -1;
+		while (descriptionAttribute == null && a<instances.numAttributes()-1)
+			if (instances.attribute(++a).isString())
 				descriptionAttribute = instances.attribute(a);
-
 		extractNumericData();
 		normalizeDataBipolarHomogenous();
 
@@ -224,6 +224,12 @@ public class TPPModel implements Serializable, Cloneable {
 				data.set(r, c, instances.instance(r).value(numericAttributes.get(c)));
 	}
 
+	/**
+	 * Extract the date attributes of the given instances
+	 * 
+	 * @throws TPPException
+	 */
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -274,13 +280,16 @@ public class TPPModel implements Serializable, Cloneable {
 		fireModelChanged(TPPModelEvent.DATA_STRUCTURE_CHANGED);
 	}
 
+	/** Return a description of a set of instances, based on any string attributes. */
 	public String getDescriptionOfInstance(int[] is) {
 		String description = "";
-		for (int i : is)
-			description += ", point #"
-					+ (i + 1)
-					+ (descriptionAttribute == null ? "" : " (" + instances.instance(i).value(descriptionAttribute)
-							+ ")");
+		if (descriptionAttribute == null) {
+			for (int i : is)
+				description += ", point #" + (i + 1);
+		} else {
+			for (int i : is)
+				description += ", " + instances.instance(i).stringValue(descriptionAttribute);
+		}
 		return description.substring(2);
 	}
 
@@ -551,7 +560,6 @@ public class TPPModel implements Serializable, Cloneable {
 		for (int i = 0; i < instances.numAttributes(); i++)
 			if (instances.attribute(i).isString()) {
 				ats.add(instances.attribute(i));
-				// System.out.println("Attribute "+instances.attribute(i)+" is string");
 			}
 		return ats;
 	}
@@ -596,6 +604,7 @@ public class TPPModel implements Serializable, Cloneable {
 	 */
 	public void pursueTarget() throws TPPException {
 		double error = projection.pursueTarget(data, target, getPointsInTrainingSet());
+		// System.out.println("pursuit error = "+error);
 		if (getProjectionConstraint() != null)
 			projection = (LinearProjection) getProjectionConstraint().findNearestValid(projection);
 		view = projection.project(data);
