@@ -1,0 +1,3 @@
+All source code, libraries, and an ant build file required to build TPP are available to download, and access to the SVN repository is available on request. Please get in touch [via the discussion board](http://groups.google.com/group/targeted-projection-pursuit) if you would like to be involved in further development of TPP.
+
+A list of suggestions for further work are included in the [issues list](http://code.google.com/p/targeted-projection-pursuit/issues/list) -- many of these would make great ideas for student final year or even MSc projects.

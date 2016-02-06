@@ -1,0 +1,5 @@
+Targeted Projection Pursuit (TPP) is an interactive information visualisation technique that allows the user to explore high dimensional data in an intuitive and transparent way. This project includes a plugin package for the [Weka](http://www.cs.waikato.ac.nz/ml/weka/) data mining toolkit. The package itself is available from [Downloads](http://code.google.com/p/targeted-projection-pursuit/downloads/list))
+
+For more information start with this [slideshow](http://targeted-projection-pursuit.googlecode.com/files/Targeted%20Projection%20Pursuit.pptx) introducing the principles behind TPP and how the interface works; or to this [bibliography](http://code.google.com/p/targeted-projection-pursuit/wiki/Bibliography) of papers that make use of TPP.
+
+There's also a very short [video demonstration](http://vimeo.com/17527997) of using targeted projection pursuit for visual analysis, including a demonstration of how it can be used to evaluate clusterings. (NB the process is described as Adaptive Projection Analysis, but it means the same thing.)
