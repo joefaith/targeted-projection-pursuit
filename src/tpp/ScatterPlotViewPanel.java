@@ -18,8 +18,6 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JPanel;
-import javax.vecmath.Point2d;
-
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.matrix.Matrix;

@@ -221,7 +221,7 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 
 			// The panel showing the current classifier selection.
 			classifierChooserPanel = new PropertyPanel(classifierChooser);
-			classifierChooser.setClassType(Classifier.class);
+			//classifierChooser.setClassType(Classifier.class);
 			classifierChooser.setValue(ExplorerDefaults.getClassifier());
 
 			classificationTargetCombo = AttributeCombo.buildCombo(model, AttributeCombo.NOMINAL_ATTRIBUTES, false);
