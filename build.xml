@@ -89,7 +89,7 @@
 
 	<!-- Put everything in ${build}/classes into the ${package}.jar file -->
 	<target name="exejar" depends="compile, docs, init_dist" description="Create a binary jar file in ./dist">
-		<jar jarfile="${dist}/${package}.jar" basedir="${build}/classes">
+		<jar jarfile="${dist}/${package}.jar" basedir="${build}/classes"  manifest="${src}/META-INF/MANIFEST.MF" >
 		</jar>
 	</target>
 
