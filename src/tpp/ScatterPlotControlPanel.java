@@ -214,6 +214,7 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 	private void addClassificationButton(JPanel actionsPanel, GridBagConstraints actionsGrid) {
 		// Add classification crossvalidation, but only if there are any nominal
 		// attributes
+		if (true) return;
 		if (model.getNominalAttributes() != null && model.getNominalAttributes().size() > 0) {
 
 			// Lets the user configure the classifier.
