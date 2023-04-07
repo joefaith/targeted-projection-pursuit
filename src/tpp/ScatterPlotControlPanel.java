@@ -1,6 +1,5 @@
 package tpp;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,15 +10,12 @@ import java.util.Vector;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.ListCellRenderer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -222,7 +218,7 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 
 			// The panel showing the current classifier selection.
 			classifierChooserPanel = new PropertyPanel(classifierChooser);
-			//classifierChooser.setClassType(Classifier.class);
+			classifierChooser.setClassType(Classifier.class);
 			classifierChooser.setValue(ExplorerDefaults.getClassifier());
 
 			classificationTargetCombo = AttributeCombo.buildCombo(model, AttributeCombo.NOMINAL_ATTRIBUTES, false);

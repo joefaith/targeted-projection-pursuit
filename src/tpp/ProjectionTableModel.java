@@ -21,8 +21,7 @@ public class ProjectionTableModel extends AbstractTableModel {
 
 	public static final int SIG_COL = 4;
 
-	private static final String[] COLUMN_NAMES = { " ", "Attribute",
-			"X \n Weight", "Y \n Weight", "Significance" };
+	private static final String[] COLUMN_NAMES = { "#", "Attribute", "x", "y", "||(x,y)||" };
 
 	int numAttributeRows;
 
