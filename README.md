@@ -18,7 +18,7 @@ Why bother visualising our data? After all, isn’t the whole point of machine l
 
 <img src="https://user-images.githubusercontent.com/17095065/230708116-28a063c3-f258-4b2e-a0b1-50c1e373e384.png" width="600">
 
-This classic example from the statistics literature, known as Anscombe's Quartet, shows why visualisation is important. It shows four data sets with the same aggregate statistics: same means and standard deviations in each dimension, same linear regression slopes and residuals. But when you graph them you can immediately see they should be treated very differently. #2 should be modelled with a quadratic. #3 and #4 need some outliers detected and maybe removed.
+This classic example from the statistics literature, known as Anscombe's Quartet, shows why visualisation is important. It shows four data sets with the same aggregate statistics: same means and standard deviations in each dimension, same linear regression slopes and residuals. But when you graph them you can immediately see they should be treated very differently, and only two of them should even be modelled with a linear regression at all.
 
 Similar problems can occur with machine learning problems, such as classification. Suppose we had a classification problem and our model was consistently generalising at 90% accuracy. Is this good? What should we do? It depends on the data. 
 
@@ -26,8 +26,8 @@ Similar problems can occur with machine learning problems, such as classificatio
 
 Here are four binary classification problems (stars and circles), with the performance of four classifiers shown: the examples where the classifications are correctly inferred are solid, the incorrect examples are unfilled. We would do something different in each of these four cases.
 
-- **Example A:** The classifier should be getting these right. Looks like a bug.
-- **Example B:** Looks like the error cases were mis-labelled. Better check them.
+- **Example A:** The classifier should be getting these right. Looks like a bug in our algorithm.
+- **Example B:** Looks like the error cases were mis-labelled. Better check the labelling process.
 - **Example C:** These classes aren’t clearly separable. 90% generalisation is probably the best we could get. Any further training could lead to overfitting.
 - **Example D:** The error cases look like outliers. We should detect these and flag up to a human that our confidence in the classification is low in these cases.
 
@@ -37,11 +37,10 @@ Visualising simple 2D cases is easy enough, but most of the data we deal with is
 
 <img src="https://user-images.githubusercontent.com/17095065/230708834-9479b5d3-7e5e-4978-ad55-bcb6f45d9d8e.png" width="600">
 
-Other algorithms, such as projecting into principal components or t-SNE try to squeeze more dimensions into two or three, but this always results in the loss of potentially important information. No single view will show us everything we need. We need ways of 'rotating' the data, so we can see what it looks like from various angles. Visualisations that use linear projections – such as PCA – have an advantage in that the projection itself can provide useful information about the data, such as which dimensions are more important in classification. 
-
+Other algorithms, such as projecting into principal components or t-SNE try to squeeze multiple dimensions into just two or three, but this always results in the loss of potentially important information. No single view will show us everything we need. We need ways of 'rotating' the data, so we can see what it looks like from various angles. 
 <img src="https://user-images.githubusercontent.com/17095065/230708185-662b706b-e001-4e73-b57c-241bd538815c.png" width="600">
 
-Targeted Project Pursuit is the higher dimensional equivalent of rotating an object to explore it. The data is initially shown projected onto the first two principal components (X = PC1, Y = PC2), but you can then rotate the data to see it from other dimensions. You can  do this by dragging and dropping specific axes, or by grabbing and dragging the data itself. The TPP algorithm will then try to find and angle of the data that matches your actions most closely. The easiest way to see this is to try it yourself!
+Visualisations that use linear projections – such as PCA – have an advantage in that the 'angle' of the projection itself can provide useful information about the data, such as which dimensions are more important in classification. Targeted Project Pursuit is the higher dimensional equivalent of rotating an object to explore it. The data is initially shown projected onto the first two principal components (X = PC1, Y = PC2), but you can then rotate the data to see it from other dimensions. You can  do this by dragging and dropping specific axes, or by grabbing and dragging the data itself. The TPP algorithm will then try to find and angle of the data that matches your actions most closely. The easiest way to see this is to try it yourself!
 
 ## Background
 TPP was originally developed to visualise gene expression data, to help clinicians diagnose early-stage cancers. The code is mostly old (>10years) java, and built on top of the Weka machine learning package, and some features have succumbed to bit rot, but if it’s useful then I’ll progressively resurrect it. Let me know.
