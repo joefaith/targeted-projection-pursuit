@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import weka.classifiers.Classifier;
-import weka.clusterers.SimpleKMeans;
+import weka.clusterers.EM;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.FastVector;
@@ -676,9 +676,14 @@ public class TPPModel implements Serializable, Cloneable {
 			numericInstances = Filter.useFilter(instances, removeClassification);
 
 			// build a clusterer
-			SimpleKMeans clusterer = new SimpleKMeans();
+			EM clusterer = new EM();
 			clusterer.setNumClusters(numClusters);
 			clusterer.buildClusterer(numericInstances);
+
+			// if we let the clusterer decide how many clusters to create, then find out how many it created.
+			if (numClusters==-1) {
+				numClusters = clusterer.numberOfClusters();
+			}
 
 			// use the clustering of the unclassified instances to add an
 			// attribute to the filtered instances

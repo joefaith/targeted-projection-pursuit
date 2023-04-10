@@ -25,6 +25,8 @@ import weka.gui.GenericObjectEditor;
 import weka.gui.PropertyPanel;
 import weka.gui.explorer.ExplorerDefaults;
 
+import weka.clusterers.Clusterer;
+
 /*
  * Created on 23-May-2006
  *
@@ -316,14 +318,15 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 	private void addClustererButton(JPanel actionsPanel, GridBagConstraints actionsGrid) {
 		// add clusterer button
 		Vector<String> clusters = new Vector<String>();
+		clusters.add("Max CV");
 		for (int k = 2; k < 9; k++)
 			clusters.add(" N=" + k);
 		clusterNumberCombo = new JComboBox(clusters);
-		clusterNumberCombo.setToolTipText("Choose the number of clusters to find in the data");
+		clusterNumberCombo.setToolTipText("Choose the number of clusters to find in the data, or let the clustering algorithm decide by cross validation");
 		clusterButton = new JButton("Create clusters:");
 		clusterButton.addActionListener(this);
 		clusterButton
-				.setToolTipText("<html><p width=\"300px\">Use an unsupervised clustering algorithm (K-means) to divide the points into clusters based on the value of the numeric attributes</p></html>");
+				.setToolTipText("<html><p width=\"300px\">Use an unsupervised clustering algorithm (EM) to divide the points into clusters based on the value of the numeric attributes. You can either choose the number of clusters to create, or let EM decide by cross validation.</p></html>");
 		actionsGrid.gridy++;
 		actionsGrid.gridx = 0;
 		actionsGrid.gridwidth = 1;
@@ -455,7 +458,14 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 	public void actionPerformed(ActionEvent event) {
 
 		if (event.getSource() == clusterButton) {
-			Attribute cluster = model.cluster(((JComboBox) clusterNumberCombo).getSelectedIndex() + 2);
+			int index = ((JComboBox) clusterNumberCombo).getSelectedIndex();
+			int n;
+			if (index==0) {
+				n = -1; // -1 indicates that the clustering algorithm should choose the number of clusters
+			} else {
+				n = index+1; // Number of clusters starts at N=2
+			}
+			Attribute cluster = model.cluster(n);
 			model.setSelectAttribute(cluster);
 			model.setColourAttribute(cluster);
 			init();

@@ -1,6 +1,5 @@
 package tpp;
 
-import weka.core.EuclideanDistance;
 import weka.core.Instance;
 import weka.core.matrix.Matrix;
 
