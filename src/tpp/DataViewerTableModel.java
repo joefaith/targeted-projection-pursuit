@@ -18,7 +18,7 @@ class DataViewerTableModel extends AbstractTableModel {
 	public Object getValueAt(int row, int col) {
 		Attribute at = spModel.getInstances().attribute(col);
 		if (at.isNumeric())
-			return new Double(spModel.getInstances().instance(row)
+			return Double.valueOf(spModel.getInstances().instance(row)
 					.value(col));
 		else
 			return spModel.getInstances().instance(row).stringValue(col);

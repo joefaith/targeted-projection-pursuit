@@ -242,7 +242,7 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		// Add test set creation button
 		Vector<Integer> testSetKValues = new Vector<Integer>();
 		for (int k = 2; k < 11; k++)
-			testSetKValues.add(new Integer(k));
+			testSetKValues.add(Integer.valueOf(k));
 		createTestSetKCombo = new JComboBox(testSetKValues);
 		createTestSetKCombo
 				.setToolTipText("<html><p width=\"300px\">What proportion of the data will be used as a test set (1/k)</p></html>");

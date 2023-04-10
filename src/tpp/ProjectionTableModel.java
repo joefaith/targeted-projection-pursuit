@@ -56,11 +56,11 @@ public class ProjectionTableModel extends AbstractTableModel {
 		case NAME_COL:
 			return attributeNames[row];
 		case X_COL:
-			return new Double(tpp.getProjection().get(row, 0));
+			return Double.valueOf(tpp.getProjection().get(row, 0));
 		case Y_COL:
-			return new Double(tpp.getProjection().get(row, 1));
+			return Double.valueOf(tpp.getProjection().get(row, 1));
 		case SIG_COL:
-			return new Double(XY(row));
+			return Double.valueOf(row);
 		default:
 			return "#Error#";
 		}

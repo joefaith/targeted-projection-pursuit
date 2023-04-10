@@ -6,8 +6,6 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import weka.core.Attribute;
-
 public class DataViewerTable extends JTable {
 	private static final Color SELECTED_COLOR = Color.cyan;
 	private ScatterPlotModel spModel;

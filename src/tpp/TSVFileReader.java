@@ -41,6 +41,7 @@ public class TSVFileReader {
 			for (String thisrow : rows)
 				values[r++] = thisrow.split(splitRegex);
 		}
+		reader.close();
 		return values;
 	}
 

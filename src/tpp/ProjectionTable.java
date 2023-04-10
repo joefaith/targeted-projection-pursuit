@@ -5,12 +5,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.util.Vector;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 

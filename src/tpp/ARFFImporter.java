@@ -2,8 +2,6 @@ package tpp;
 
 import java.io.FileReader;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
 import weka.core.Instances;
 
 public class ARFFImporter implements DataImporter {

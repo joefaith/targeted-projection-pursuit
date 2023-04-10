@@ -5,9 +5,6 @@ package tpp;
  */
 public class Gaussian {
 
-	/** Square root of 2 x pi. */
-	private static final float R2PI = 2.5066282f;
-
 	private static final double[] kernel = new double[] { 0.006, 0.061, 0.242, 0.383, 0.242, 0.061, 0.006 };
 
 	public double[] filter(double[] x) {

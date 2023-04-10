@@ -88,7 +88,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 		for (int i = 0; i < spModel.getNumDataPoints(); i++) {
 			distance = pt.distance(new Point2D.Double(spModel.getView().get(i, X), spModel.getView().get(i, Y)));
 			if (distance < margin)
-				points.add(new Integer(i));
+				points.add(Integer.valueOf(i));
 		}
 		int[] aPoints = new int[points.size()];
 		for (int i = 0; i < points.size(); i++)
@@ -109,7 +109,7 @@ public class ScatterPlotViewPanel extends JPanel implements TPPModelEventListene
 			distance = pt.distance(new Point2D.Double(spModel.getProjection().get(i, X), spModel.getProjection().get(i,
 					1)));
 			if (distance < margin)
-				axes.add(new Integer(i));
+				axes.add(Integer.valueOf(i));
 		}
 		int[] aAxes = new int[axes.size()];
 		for (int i = 0; i < axes.size(); i++)
