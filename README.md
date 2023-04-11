@@ -11,11 +11,11 @@ TPP is a technique for visualising and exploring high-dimensional data for explo
 - Double click on the jar to run it, or run it from the command line with `java -jar TPP.jar`
 - Load a data set from a CSV file (including a header row) with `File > Load CSV File`. 
 - The data is initially shown projected onto the first two principal components (X=PC1, Y=PC2). But you can then
-- - Drag data points or axes to explore the data and find more useful views
-- - Select which attributes to color or size the points by
-- - See the effect of clustering or common classification algorithms
-- - Remove attributes to see which attributes are most significant
-- - Tip: use the right button to resize the data to fit your window.
+-- Drag data points or axes to explore the data and find more useful views
+-- Select which attributes to color or size the points by
+-- See the effect of clustering or common classification algorithms
+-- Remove attributes to see which attributes are most significant
+-- Tip: use the right button to resize the data to fit your window.
 
 ## Why Visualise Your Data?
 
