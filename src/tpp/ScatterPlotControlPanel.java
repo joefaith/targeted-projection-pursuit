@@ -69,6 +69,8 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 
 	private JButton removeAttributeButton;
 
+	private JButton normaliseButton;
+
 	private AttributeCombo fillCombo;
 
 	private AttributeCombo shapeCombo;
@@ -165,9 +167,9 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		addClassificationButton(actionsPanel, actionsGrid);
 
 		// experimental UI elements:
-//		addPointSelector(actionsPanel, actionsGrid);
-//		addSeriesCreationButton(actionsPanel, actionsGrid);
-//		addTestSetCreationButton(actionsPanel, actionsGrid);
+		// addPointSelector(actionsPanel, actionsGrid);
+		// addSeriesCreationButton(actionsPanel, actionsGrid);
+		// addTestSetCreationButton(actionsPanel, actionsGrid);
 
 		// and add these options to the control panel
 		grid.gridy++;
@@ -184,7 +186,8 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		// add projection table
 		projectionTable = new ProjectionTable(model);
 		projectionTable
-				.setToolTipText("<html><p width=\"300px\">This table shows the components of the linear projection used to produce the view of the data. The x and y components of each attribute (axis) are shown, and the 'Significance' column shows the overall length. The rows can be ordered by each of the columns (click on the header to re-order). By clicking on the 'Significance' column you can find which attributes are most significant in producing the view. Values from the table can be copied to the clipboard and imported to Excel etc. Or these values can be saved from the File menu.</p></html>");
+				.setToolTipText(
+						"<html><p width=\"300px\">This table shows the components of the linear projection used to produce the view of the data. The x and y components of each attribute (axis) are shown, and the 'Significance' column shows the overall length. The rows can be ordered by each of the columns (click on the header to re-order). By clicking on the 'Significance' column you can find which attributes are most significant in producing the view. Values from the table can be copied to the clipboard and imported to Excel etc. Or these values can be saved from the File menu.</p></html>");
 		JScrollPane tablePane = new JScrollPane(projectionTable);
 		grid.gridx = 0;
 		grid.gridwidth = 3;
@@ -192,12 +195,21 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		grid.weighty = 1;
 		add(tablePane, grid);
 
-		removeAttributeButton = new JButton("Remove Selected Attributes");
+		normaliseButton = new JButton("Normalise");
+		normaliseButton.addActionListener(this);
+		normaliseButton.setToolTipText("Normalise numeric attributes to [0,1]");
+		grid.gridy++;
+		grid.gridx = 0;
+		grid.weighty = 0;
+		grid.gridwidth = 1;
+		add(normaliseButton, grid);
+
+		removeAttributeButton = new JButton("Remove");
 		removeAttributeButton.addActionListener(this);
 		removeAttributeButton.setToolTipText("Remove the selected attributes");
-		grid.gridy++;
+		grid.gridx = 1;
 		grid.weighty = 0;
-		grid.gridwidth = 2;
+		grid.gridwidth = 1;
 		add(removeAttributeButton, grid);
 
 		undoButton = new JButton("Undo");
@@ -227,7 +239,8 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 			applyClassifierButton = new JButton("Apply classifier:");
 			applyClassifierButton.addActionListener(this);
 			applyClassifierButton
-					.setToolTipText("<html><p width=\"300px\">Test the performance of a classification algorithm on this data. The chosen classifier is applied using 10-fold cross-validation, and the resulting predicted classifications and error are shown.</p></html>");
+					.setToolTipText(
+							"<html><p width=\"300px\">Test the performance of a classification algorithm on this data. The chosen classifier is applied using 10-fold cross-validation, and the resulting predicted classifications and error are shown.</p></html>");
 			classifierChooserPanel.setToolTipText("Choose a classifier from the Weka toolkit");
 			actionsGrid.gridy++;
 			actionsGrid.gridx = 0;
@@ -247,11 +260,13 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 			testSetKValues.add(Integer.valueOf(k));
 		createTestSetKCombo = new JComboBox(testSetKValues);
 		createTestSetKCombo
-				.setToolTipText("<html><p width=\"300px\">What proportion of the data will be used as a test set (1/k)</p></html>");
+				.setToolTipText(
+						"<html><p width=\"300px\">What proportion of the data will be used as a test set (1/k)</p></html>");
 		createTestSetButton = new JButton("Create test set");
 		createTestSetButton.addActionListener(this);
 		createTestSetButton
-				.setToolTipText("<html><p width=\"300px\">Create a test set. The points in the test set will not be affected by projection pursuit operations (dragging or separating etc), so this shows the generalisability and robustness of the projection pursuit operations</p></html>");
+				.setToolTipText(
+						"<html><p width=\"300px\">Create a test set. The points in the test set will not be affected by projection pursuit operations (dragging or separating etc), so this shows the generalisability and robustness of the projection pursuit operations</p></html>");
 		removeTestSetButton = new JButton("Remove test set");
 		removeTestSetButton.addActionListener(this);
 		actionsGrid.gridy++;
@@ -270,11 +285,13 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 
 			seriesIdCombo = AttributeCombo.buildCombo(model, AttributeCombo.NOMINAL_ATTRIBUTES, true);
 			seriesIdCombo
-					.setToolTipText("<html><p width=\"300px\">Choose the attribute that identifies which series each point is a member of. If no attribute is chosen then include all points in a single series</p></html>");
+					.setToolTipText(
+							"<html><p width=\"300px\">Choose the attribute that identifies which series each point is a member of. If no attribute is chosen then include all points in a single series</p></html>");
 			seriesIndexCombo = AttributeCombo.buildCombo(model, AttributeCombo.ORDERED_ATTRIBUTES, false);
 			seriesIndexCombo.setMinimumSize(min);
 			seriesIndexCombo
-					.setToolTipText("<html><p width=\"300px\">Choose the attribute used to order points in the series, such as a date.</p></html>");
+					.setToolTipText(
+							"<html><p width=\"300px\">Choose the attribute used to order points in the series, such as a date.</p></html>");
 			seriesIdCombo.setMinimumSize(min);
 			if (model.getSeries() != null) {
 				seriesIdCombo.setSelectedAttribute(model.getSeries().getIdAttribute());
@@ -300,7 +317,8 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 			smoothSeriesButton = new SmoothButton(model);
 			smoothSeriesButton.setText("Smooth Series");
 			smoothSeriesButton
-					.setToolTipText("<html><p width=\"300px\">Try to find a view of the data that removes low frequency noise and shows longer-term evolution of the system</p></html>");
+					.setToolTipText(
+							"<html><p width=\"300px\">Try to find a view of the data that removes low frequency noise and shows longer-term evolution of the system</p></html>");
 			actionsGrid.gridy++;
 			actionsGrid.gridx = 0;
 			actionsGrid.gridwidth = 1;
@@ -322,11 +340,13 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		for (int k = 2; k < 9; k++)
 			clusters.add(" N=" + k);
 		clusterNumberCombo = new JComboBox(clusters);
-		clusterNumberCombo.setToolTipText("Choose the number of clusters to find in the data, or let the clustering algorithm decide by cross validation");
+		clusterNumberCombo.setToolTipText(
+				"Choose the number of clusters to find in the data, or let the clustering algorithm decide by cross validation");
 		clusterButton = new JButton("Create clusters:");
 		clusterButton.addActionListener(this);
 		clusterButton
-				.setToolTipText("<html><p width=\"300px\">Use an unsupervised clustering algorithm (EM) to divide the points into clusters based on the value of the numeric attributes. You can either choose the number of clusters to create, or let EM decide by cross validation.</p></html>");
+				.setToolTipText(
+						"<html><p width=\"300px\">Use an unsupervised clustering algorithm (EM) to divide the points into clusters based on the value of the numeric attributes. You can either choose the number of clusters to create, or let EM decide by cross validation.</p></html>");
 		actionsGrid.gridy++;
 		actionsGrid.gridx = 0;
 		actionsGrid.gridwidth = 1;
@@ -437,7 +457,8 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		separateButton = new SeparatePointsButton(model, selectCombo);
 		separateButton.setText("Separate points");
 		separateButton
-				.setToolTipText("<html><p width=\"300px\">Try to find a projection in which the points are separated on the basis of the chosen attribute. If the attribute is nominal then each of the classes will be separated as far as possible. If the attribute is numeric then the distance between points in will try to approximate to the difference in value of this attribute</p></html>");
+				.setToolTipText(
+						"<html><p width=\"300px\">Try to find a projection in which the points are separated on the basis of the chosen attribute. If the attribute is nominal then each of the classes will be separated as far as possible. If the attribute is numeric then the distance between points in will try to approximate to the difference in value of this attribute</p></html>");
 		// can only separate points by a nominal attribute
 		// (SeparatePoints contains code to separate by numerical attributes as
 		// well but it doesn't work very well)
@@ -460,10 +481,11 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		if (event.getSource() == clusterButton) {
 			int index = ((JComboBox) clusterNumberCombo).getSelectedIndex();
 			int n;
-			if (index==0) {
-				n = -1; // -1 indicates that the clustering algorithm should choose the number of clusters
+			if (index == 0) {
+				n = -1; // -1 indicates that the clustering algorithm should choose the number of
+						// clusters
 			} else {
-				n = index+1; // Number of clusters starts at N=2
+				n = index + 1; // Number of clusters starts at N=2
 			}
 			Attribute cluster = model.cluster(n);
 			model.setSelectAttribute(cluster);
@@ -512,6 +534,14 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		if (event.getSource() == undoButton)
 			model.undo();
 
+		if (event.getSource() == normaliseButton)
+			try {
+				model.normalizeDataUnit();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		if (event.getSource() == pointSelectorButton) {
 			model.selectPoint(pointSelectorCombo.getSelectedIndex());
 			model.drawRectangleAroundSelectedPoints();
@@ -555,14 +585,14 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 
 	public void modelChanged(TPPModelEvent e) {
 		switch (e.getType()) {
-		case (TPPModelEvent.DATA_SET_CHANGED):
-			init();
-			break;
-		case (TPPModelEvent.DATA_STRUCTURE_CHANGED):
-			init();
-			break;
-		default:
-			repaint();
+			case (TPPModelEvent.DATA_SET_CHANGED):
+				init();
+				break;
+			case (TPPModelEvent.DATA_STRUCTURE_CHANGED):
+				init();
+				break;
+			default:
+				repaint();
 		}
 	}
 

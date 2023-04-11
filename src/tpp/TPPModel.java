@@ -198,6 +198,8 @@ public class TPPModel implements Serializable, Cloneable {
 		normalize.setInputFormat(instances);
 		instances = Filter.useFilter(instances, normalize);
 		extractNumericData();
+		project();
+		fireModelChanged(TPPModelEvent.DATA_VALUE_CHANGED);
 
 	}
 
