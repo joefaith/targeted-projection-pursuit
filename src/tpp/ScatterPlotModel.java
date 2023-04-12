@@ -278,6 +278,20 @@ public class ScatterPlotModel extends TPPModel implements Cloneable {
 		return super.removeAttribute(at);
 	}
 
+
+	/**
+	 * Normalize the numeric data from the filtered instances to the range [0,1]
+	 * (ie the minimum data value will be reset to 0 and maximum to 1.
+	 * 
+	 * @throws Exception
+	 */
+	public void normalizeDataUnit() throws Exception {
+		takeSnapshot();
+		super.normalizeDataUnit();
+		resizePlot();
+	}
+
+
 	/** remove multiple attributes */
 	public void removeAttributes(Vector<Attribute> attributes) {
 		takeSnapshot();

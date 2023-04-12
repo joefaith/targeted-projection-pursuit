@@ -89,7 +89,7 @@ public class SelectButton extends JButton implements ActionListener {
 			String classValue;
 			while (classValues.hasMoreElements()) {
 				classValue = (String) classValues.nextElement();
-				button = new SelectButton(spModel, classValue);
+				button = new SelectButton(spModel, classValue );
 				button.setForeground(colours.getClassificationColor(b++));
 				button.setBackground(colours.getBackgroundColor());
 				button.setToolTipText("Select all points of class " + classValue);
