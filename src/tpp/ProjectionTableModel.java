@@ -60,7 +60,7 @@ public class ProjectionTableModel extends AbstractTableModel {
 		case Y_COL:
 			return Double.valueOf(tpp.getProjection().get(row, 1));
 		case SIG_COL:
-			return Double.valueOf(row);
+			return Double.valueOf(XY(row));
 		default:
 			return "#Error#";
 		}

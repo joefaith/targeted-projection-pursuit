@@ -336,7 +336,7 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 	private void addClustererButton(JPanel actionsPanel, GridBagConstraints actionsGrid) {
 		// add clusterer button
 		Vector<String> clusters = new Vector<String>();
-		clusters.add("Max CV");
+		clusters.add("Use CV");
 		for (int k = 2; k < 9; k++)
 			clusters.add(" N=" + k);
 		clusterNumberCombo = new JComboBox(clusters);
@@ -346,7 +346,7 @@ public class ScatterPlotControlPanel extends JPanel implements TPPModelEventList
 		clusterButton.addActionListener(this);
 		clusterButton
 				.setToolTipText(
-						"<html><p width=\"300px\">Use an unsupervised clustering algorithm (EM) to divide the points into clusters based on the value of the numeric attributes. You can either choose the number of clusters to create, or let EM decide by cross validation.</p></html>");
+						"<html><p width=\"300px\">Use an unsupervised clustering algorithm (DBSCAN) to divide the points into clusters based on the value of the numeric attributes. You can either choose the number of clusters to create, or let DBSCAN decide by cross validation.</p></html>");
 		actionsGrid.gridy++;
 		actionsGrid.gridx = 0;
 		actionsGrid.gridwidth = 1;
